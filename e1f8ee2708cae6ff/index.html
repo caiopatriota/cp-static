@@ -202,7 +202,9 @@ const labelFiltro  = () => filterYear === "all" ? "todo o período" : filterYear
 
 /* ---------------- chips ---------------- */
 const chipBox = document.getElementById("yearChips");
-[["all","Todos"], ...YEARS.map(y => [String(y), String(y)])].forEach(([v,l]) => {
+// anos do mais recente para o mais antigo: no celular a lista rola, e o ano
+// corrente tem que estar visivel sem arrastar
+[["all","Todos"], ...YEARS.slice().reverse().map(y => [String(y), String(y)])].forEach(([v,l]) => {
   const b = document.createElement("button");
   b.className = "chip"; b.type = "button"; b.textContent = l;
   b.setAttribute("aria-pressed", String(v === "all"));

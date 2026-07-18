@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<meta name="color-scheme" content="light dark">
+<title>Despesas — Caio</title>
+</head>
+<body>
+<style>
+:root{
+  color-scheme: light;
+  --surface-0:#f6f6f4; --surface-1:#fcfcfb; --surface-2:#efefec;
+  --border:#e4e4de; --border-strong:#cfcfc8;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#84837c;
+  --s1:#2a78d6; --s3:#eda100;
+  --grid:#e8e8e3;
+  --seq-1:#dce9f9; --seq-2:#b3d0f2; --seq-3:#7fb0e8; --seq-4:#4a8fdc; --seq-5:#2a78d6; --seq-6:#1d5aa3;
+  --on-deep:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --surface-0:#121211; --surface-1:#1a1a19; --surface-2:#232322;
+    --border:#2e2e2c; --border-strong:#42423e;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#908f86;
+    --s1:#3987e5; --s3:#c98500;
+    --grid:#2a2a28;
+    --seq-1:#16304d; --seq-2:#1c4370; --seq-3:#215893; --seq-4:#2a6fb8; --seq-5:#3987e5; --seq-6:#6aa9ee;
+    --on-deep:#ffffff;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface-0:#121211; --surface-1:#1a1a19; --surface-2:#232322;
+  --border:#2e2e2c; --border-strong:#42423e;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#908f86;
+  --s1:#3987e5; --s3:#c98500;
+  --grid:#2a2a28;
+  --seq-1:#16304d; --seq-2:#1c4370; --seq-3:#215893; --seq-4:#2a6fb8; --seq-5:#3987e5; --seq-6:#6aa9ee;
+  --on-deep:#ffffff;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--surface-0); color:var(--text-primary);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
+  margin:0; padding:20px 14px calc(40px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:1160px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+
+.head h1{font-size:23px;line-height:1.2;letter-spacing:-.022em;font-weight:660;margin:0;text-wrap:balance}
+.head .sub{color:var(--text-muted);font-size:13px;margin-top:5px}
+
+/* filtros — rolagem horizontal no celular, sem quebrar a página */
+.filters{display:flex;gap:7px;overflow-x:auto;padding:2px 0 4px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;scroll-snap-align:start;background:var(--surface-1);border:1px solid var(--border);
+  color:var(--text-secondary);border-radius:999px;padding:9px 16px;font-size:14px;font-family:inherit;
+  cursor:pointer;min-height:40px;transition:background .12s,border-color .12s,color .12s}
+.chip:hover{border-color:var(--border-strong);color:var(--text-primary)}
+.chip[aria-pressed="true"]{background:var(--s1);border-color:var(--s1);color:#fff;font-weight:560}
+.chip:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.kpi{background:var(--surface-1);border:1px solid var(--border);border-radius:13px;padding:13px 14px}
+.kpi.wide{grid-column:1 / -1}
+.kpi .lab{font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.075em;font-weight:600}
+.kpi .val{font-size:22px;font-weight:650;letter-spacing:-.03em;margin-top:5px;font-variant-numeric:tabular-nums;
+  line-height:1.15;text-wrap:balance}
+.kpi .note{font-size:12px;color:var(--text-secondary);margin-top:3px;font-variant-numeric:tabular-nums}
+
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:13px;padding:15px 15px 12px}
+.card h2{font-size:14.5px;font-weight:620;letter-spacing:-.012em;margin:0}
+.card .hint{font-size:12.5px;color:var(--text-muted);margin-top:3px;line-height:1.45}
+.card .body{margin-top:12px}
+
+/* leitura fixa: no toque o dedo tapa um tooltip flutuante, então o valor vive aqui */
+.readout{background:var(--surface-2);border-radius:9px;padding:9px 11px;margin-top:11px;min-height:62px;
+  font-variant-numeric:tabular-nums}
+.readout .rt{font-size:13px;font-weight:640;letter-spacing:-.01em}
+.readout .rv{font-size:12.5px;color:var(--text-secondary);margin-top:3px;
+  display:flex;flex-wrap:wrap;gap:3px 14px}
+.readout .idle{font-size:12.5px;color:var(--text-muted);padding-top:12px}
+
+svg{display:block;width:100%;touch-action:pan-y}
+.sm{display:grid;grid-template-columns:1fr;gap:0}
+.sm .cell{padding:11px 0 7px;border-top:1px solid var(--border)}
+.sm .cell:first-child{border-top:0;padding-top:2px}
+.sm .cn{font-size:13.5px;font-weight:560;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sm .cv{font-size:12.5px;color:var(--text-secondary);font-variant-numeric:tabular-nums;flex:0 0 auto}
+
+.tbl{display:flex;flex-direction:column}
+.trow{display:grid;grid-template-columns:1fr auto;gap:3px 12px;padding:10px 0;border-top:1px solid var(--border);
+  align-items:baseline}
+.trow:first-child{border-top:0}
+.tname{font-size:14px;font-weight:540;position:relative}
+.tval{font-size:14px;font-weight:640;font-variant-numeric:tabular-nums;text-align:right}
+.tmeta{font-size:12px;color:var(--text-muted);grid-column:1}
+.tpct{font-size:12px;color:var(--text-muted);text-align:right;font-variant-numeric:tabular-nums}
+.tbar{height:3px;border-radius:2px;background:var(--seq-3);grid-column:1 / -1;margin-top:3px}
+
+.foot{color:var(--text-muted);font-size:12px;line-height:1.65;padding:4px 2px 0}
+.foot code{font-size:11.5px;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+
+@media (min-width:660px){
+  body{padding:28px 22px 60px}
+  .wrap{gap:14px}
+  .head h1{font-size:27px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+  .kpi.wide{grid-column:auto}
+  .kpi .val{font-size:26px}
+  .card{padding:18px 20px 15px}
+  .sm{grid-template-columns:1fr 1fr;gap:0 22px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .trow{grid-template-columns:1fr auto auto;gap:4px 18px}
+  .tmeta{grid-column:1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <h1>Despesas — Caio</h1>
+    <div class="sub" id="sub"></div>
+  </div>
+
+  <div class="filters" id="yearChips" role="group" aria-label="Filtrar por ano"></div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card">
+    <h2>Gasto mensal</h2>
+    <div class="hint" id="lineHint"></div>
+    <div class="body"><div id="cLine"></div></div>
+    <div class="readout" id="roLine"><div class="idle">Arraste o dedo sobre o gráfico para ver cada mês.</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Total por ano</h2>
+      <div class="hint">2022 tem só 3 meses e 2026 só 7 — compare pela média mensal, não pelo total.</div>
+      <div class="body"><div id="cYear"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>Calendário</h2>
+      <div class="hint">Quanto mais escuro, maior o gasto. Tracejado = mês sem planilha.</div>
+      <div class="body"><div id="cHeat"></div></div>
+      <div class="readout" id="roHeat"><div class="idle">Toque num mês para ver o valor.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="catTitle">Gasto por categoria</h2>
+    <div class="hint" id="catHint"></div>
+    <div class="body"><div id="cCat"></div></div>
+  </div>
+
+  <div class="card">
+    <h2>Cada categoria ao longo do tempo</h2>
+    <div class="hint">Mini-séries mensais na mesma escala, para comparar o formato do gasto entre categorias.</div>
+    <div class="body sm" id="cSm"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="itTitle">Maiores itens</h2>
+    <div class="hint" id="itHint"></div>
+    <div class="body tbl" id="tItems"></div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const ROWS = [[2022,10,"Alimentação","Comida de rua",85.0],[2022,10,"Alimentação","Farmacia",169.0],[2022,10,"Alimentação","Mercado",90.0],[2022,10,"Alimentação","Restaurante Gourmet",1563.0],[2022,10,"Alimentação","Restaurante dia-a-dia",18.0],[2022,10,"Entreterimento","Airbnb",492.0],[2022,10,"Entreterimento","Cinema",120.0],[2022,10,"Entreterimento","Hotel",450.0],[2022,10,"Entreterimento","Kart",120.0],[2022,10,"Entreterimento","Outros",450.0],[2022,10,"Roupas","Camiseta",318.0],[2022,10,"Roupas","Tennis",999.0],[2022,10,"Transporte","Estacionamento",12.0],[2022,10,"Transporte","Multa",124.0],[2022,10,"Viagens","Dolar",2325.0],[2022,10,"Viagens","Hotel",3300.0],[2022,10,"Viagens","Passagem",1800.0],[2022,10,"Viagens Poker","Airbnb",1351.0],[2022,10,"Viagens Poker","Passagem",189.0],[2022,11,"Alimentação","Restaurante Gourmet",1146.0],[2022,11,"Entreterimento","Balada",340.0],[2022,11,"Entreterimento","Hotel",2667.0],[2022,11,"Entreterimento","Massagem",250.0],[2022,11,"Entreterimento","Outros",5800.0],[2022,11,"Roupas","Camiseta",1350.0],[2022,11,"Roupas","Tennis",1050.0],[2022,11,"Saude","Medico",535.0],[2022,11,"Viagens","Comida",1562.0],[2022,11,"Viagens","Entreterimento",360.0],[2022,11,"Viagens","Passagem",370.0],[2022,11,"Viagens Poker","Airbnb",2032.0],[2022,11,"Viagens Poker","Plo Master",295.0],[2022,12,"Alimentação","Mercado",30.0],[2022,12,"Alimentação","Restaurante Gourmet",265.0],[2022,12,"Alimentação","Restaurante dia-a-dia",75.0],[2022,12,"Alimentação","Whey",130.0],[2022,12,"Eletronicos","Cooler",584.0],[2022,12,"Entreterimento","Balada",244.0],[2022,12,"Entreterimento","Cinema",74.0],[2022,12,"Entreterimento","Hotel",446.0],[2022,12,"Entreterimento","Ingresso",1300.0],[2022,12,"Entreterimento","Outros",500.0],[2022,12,"Transporte","Estacionamento",50.0],[2022,12,"Viagens","Airbnb",3885.0],[2022,12,"Viagens","Passagem",623.0],[2022,12,"Viagens Poker","Plo Master",238.0],[2023,1,"Alimentação","Comida de rua",60.0],[2023,1,"Alimentação","Mercado",125.0],[2023,1,"Alimentação","Restaurante Gourmet",1040.0],[2023,1,"Alimentação","Restaurante dia-a-dia",74.0],[2023,1,"Alimentação","iFood",315.0],[2023,1,"Eletronicos","Jogo do Play",317.0],[2023,1,"Entreterimento","Balada",630.0],[2023,1,"Entreterimento","Boliche",670.0],[2023,1,"Entreterimento","Hotel",294.0],[2023,1,"Viagens","Floripa",3058.0],[2023,1,"Viagens","Passagem",1112.0],[2023,1,"Viagens Poker","Airbnb",2250.0],[2023,1,"Viagens Poker","Passagem",235.0],[2023,1,"Viagens Poker","Plo Master",2326.0],[2023,2,"Alimentação","Mercado",155.0],[2023,2,"Alimentação","Restaurante Gourmet",2198.0],[2023,2,"Entreterimento","Balada",710.0],[2023,2,"Entreterimento","Cinema",380.0],[2023,2,"Entreterimento","Hotel",710.0],[2023,2,"Viagens","RJ",4032.0],[2023,3,"Alimentação","Comida de rua",5.0],[2023,3,"Alimentação","Mercado",131.0],[2023,3,"Alimentação","Restaurante Gourmet",2110.0],[2023,3,"Alimentação","Restaurante dia-a-dia",1611.0],[2023,3,"Despesas Fixas","Aula Tennis",470.0],[2023,3,"Despesas Fixas","Cabelo",103.0],[2023,3,"Despesas Fixas","Limpeza",200.0],[2023,3,"Despesas Fixas","Plano de Celular",70.0],[2023,3,"Eletronicos","Cabo Pc",1020.0],[2023,3,"Eletronicos","TV",5118.0],[2023,3,"Entreterimento","Balada",694.0],[2023,3,"Entreterimento","Cinema",106.0],[2023,3,"Entreterimento","Hotel",695.0],[2023,3,"Entreterimento","Outros",800.0],[2023,3,"Itens","Anel",1400.0],[2023,3,"Itens","Cortinas",1265.0],[2023,3,"Itens","Flor",258.0],[2023,3,"Itens","Raquete Tennis",1800.0],[2023,3,"Saude","Farmacia",238.0],[2023,3,"Transporte","Estacionamento",47.0],[2023,3,"Transporte","Gasolina",491.0],[2023,3,"Transporte","Uber",86.0],[2023,3,"Viagens Poker","Airbnb",600.0],[2023,4,"Alimentação","Comida de rua",302.0],[2023,4,"Alimentação","Mercado",1090.0],[2023,4,"Alimentação","Restaurante Gourmet",306.0],[2023,4,"Alimentação","Restaurante dia-a-dia",1156.0],[2023,4,"Alimentação","iFood",825.0],[2023,4,"Despesas Fixas","Assinaturas",21.0],[2023,4,"Despesas Fixas","Aula Tennis",420.0],[2023,4,"Despesas Fixas","Cabelo",55.0],[2023,4,"Despesas Fixas","Condominio",851.0],[2023,4,"Despesas Fixas","Gas",9.0],[2023,4,"Despesas Fixas","IPTU",1378.0],[2023,4,"Despesas Fixas","Internet",5.0],[2023,4,"Despesas Fixas","Limpeza",400.0],[2023,4,"Despesas Fixas","Luz",55.0],[2023,4,"Despesas Fixas","Plano de Celular",22.0],[2023,4,"Eletronicos","Controle",70.0],[2023,4,"Eletronicos","Jogo do Play",364.0],[2023,4,"Entreterimento","Balada",704.0],[2023,4,"Itens","Quadro",1666.0],[2023,4,"Transporte","Estacionamento",16.0],[2023,4,"Transporte","Gasolina",652.0],[2023,4,"Transporte","Uber",24.0],[2023,4,"Viagens","Floripa",1375.0],[2023,4,"Viagens","SP",756.0],[2023,5,"Alimentação","Comida de rua",73.0],[2023,5,"Alimentação","Mercado",364.0],[2023,5,"Alimentação","Restaurante Gourmet",666.0],[2023,5,"Alimentação","Restaurante dia-a-dia",575.0],[2023,5,"Alimentação","iFood",342.0],[2023,5,"Despesas Fixas","Apple",11.0],[2023,5,"Despesas Fixas","Aula Tennis",870.0],[2023,5,"Despesas Fixas","Cabelo",88.0],[2023,5,"Despesas Fixas","Condominio",622.0],[2023,5,"Despesas Fixas","Gas",82.0],[2023,5,"Despesas Fixas","Internet",130.0],[2023,5,"Despesas Fixas","Limpeza",600.0],[2023,5,"Despesas Fixas","Luz",63.0],[2023,5,"Despesas Fixas","Plano de Celular",94.0],[2023,5,"Despesas Fixas","YouTube",21.0],[2023,5,"Entreterimento","Balada",720.0],[2023,5,"Entreterimento","Outros",203.0],[2023,5,"Itens","Lustre",350.0],[2023,5,"Itens","Presente",350.0],[2023,5,"Saude","Farmacia",102.0],[2023,5,"Transporte","Estacionamento",93.0],[2023,5,"Transporte","Gasolina",230.0],[2023,5,"Transporte","Uber",125.0],[2023,6,"Alimentação","Comida de rua",170.0],[2023,6,"Alimentação","Mercado",533.0],[2023,6,"Alimentação","Restaurante Gourmet",890.0],[2023,6,"Alimentação","Restaurante dia-a-dia",625.0],[2023,6,"Alimentação","iFood",272.0],[2023,6,"Despesas Fixas","Apple",11.0],[2023,6,"Despesas Fixas","Aula Tennis",90.0],[2023,6,"Despesas Fixas","Condominio",681.0],[2023,6,"Despesas Fixas","Gas",107.0],[2023,6,"Despesas Fixas","Internet",130.0],[2023,6,"Despesas Fixas","Limpeza",400.0],[2023,6,"Despesas Fixas","Luz",67.0],[2023,6,"Despesas Fixas","Plano de Celular",92.0],[2023,6,"Despesas Fixas","YouTube",21.0],[2023,6,"Entreterimento","Balada",134.0],[2023,6,"Saude","Farmacia",44.0],[2023,6,"Transporte","Estacionamento",67.0],[2023,6,"Transporte","Gasolina",236.0],[2023,6,"Viagens","Itens",3315.0],[2023,6,"Viagens","Passagem",1734.0],[2023,6,"Viagens Poker","Comida",2130.0],[2023,6,"Viagens Poker","Passagem",2000.0],[2023,6,"Viagens Poker","Taxi",1320.0],[2023,7,"Alimentação","Comida de rua",35.0],[2023,7,"Alimentação","Mercado",1220.0],[2023,7,"Alimentação","Restaurante Gourmet",1295.0],[2023,7,"Alimentação","Restaurante dia-a-dia",841.0],[2023,7,"Alimentação","iFood",493.0],[2023,7,"Despesas Fixas","Apple",11.0],[2023,7,"Despesas Fixas","Aula Tennis",865.0],[2023,7,"Despesas Fixas","Cabelo",143.0],[2023,7,"Despesas Fixas","Condominio",654.0],[2023,7,"Despesas Fixas","Gas",168.0],[2023,7,"Despesas Fixas","Internet",130.0],[2023,7,"Despesas Fixas","Limpeza",200.0],[2023,7,"Despesas Fixas","Luz",64.0],[2023,7,"Despesas Fixas","Plano de Celular",92.0],[2023,7,"Despesas Fixas","YouTube",21.0],[2023,7,"Entreterimento","Balada",120.0],[2023,7,"Itens","Presente",44.0],[2023,7,"Itens","Tennis",334.0],[2023,7,"Saude","Farmacia",67.0],[2023,7,"Saude","Medico",190.0],[2023,7,"Transporte","Estacionamento",19.0],[2023,7,"Transporte","Gasolina",486.0],[2023,8,"Alimentação","Açougue",935.0],[2023,8,"Alimentação","Comida de rua",125.0],[2023,8,"Alimentação","Marmitas",222.0],[2023,8,"Alimentação","Mercado",1331.0],[2023,8,"Alimentação","Restaurante Gourmet",575.0],[2023,8,"Alimentação","Restaurante dia-a-dia",331.0],[2023,8,"Alimentação","iFood",103.0],[2023,8,"Despesas Fixas","Apple",15.0],[2023,8,"Despesas Fixas","Aula Tennis",650.0],[2023,8,"Despesas Fixas","Cabelo",88.0],[2023,8,"Despesas Fixas","Condominio",603.0],[2023,8,"Despesas Fixas","Futebol",25.0],[2023,8,"Despesas Fixas","Gas",120.0],[2023,8,"Despesas Fixas","Internet",130.0],[2023,8,"Despesas Fixas","Limpeza",550.0],[2023,8,"Despesas Fixas","Luz",80.0],[2023,8,"Despesas Fixas","Plano de Celular",92.0],[2023,8,"Despesas Fixas","YouTube",21.0],[2023,8,"Entreterimento","Balada",501.0],[2023,8,"Entreterimento","Cinema",90.0],[2023,8,"Itens","Presente",145.0],[2023,8,"Itens","Tennis",334.0],[2023,8,"Itens","itens",40.0],[2023,8,"Saude","Farmacia",275.0],[2023,8,"Saude","Medico",5800.0],[2023,8,"Transporte","Despesas do Carro",60.0],[2023,8,"Transporte","Estacionamento",63.0],[2023,8,"Transporte","Estar",30.0],[2023,8,"Transporte","Gasolina",724.0],[2023,8,"Transporte","Uber",56.0],[2023,9,"Alimentação","Comida de rua",69.0],[2023,9,"Alimentação","Marmitas",222.0],[2023,9,"Alimentação","Mercado",97.0],[2023,9,"Alimentação","Restaurante Gourmet",100.0],[2023,9,"Alimentação","Restaurante dia-a-dia",505.0],[2023,9,"Despesas Fixas","Apple",15.0],[2023,9,"Despesas Fixas","Aula Tennis",440.0],[2023,9,"Despesas Fixas","Cabelo",60.0],[2023,9,"Despesas Fixas","Condominio",701.0],[2023,9,"Despesas Fixas","Futebol",25.0],[2023,9,"Despesas Fixas","Gas",245.0],[2023,9,"Despesas Fixas","Internet",130.0],[2023,9,"Despesas Fixas","Limpeza",200.0],[2023,9,"Despesas Fixas","Luz",105.0],[2023,9,"Despesas Fixas","Plano de Celular",92.0],[2023,9,"Despesas Fixas","YouTube",21.0],[2023,9,"Entreterimento","Balada",336.0],[2023,9,"Itens","Cadeira",140.0],[2023,9,"Itens","Livros",35.0],[2023,9,"Itens","Tennis",333.0],[2023,9,"Saude","Farmacia",241.0],[2023,9,"Transporte","Estacionamento",72.0],[2023,9,"Transporte","Estar",30.0],[2023,9,"Transporte","Gasolina",35.0],[2023,9,"Transporte","Uber",105.0],[2023,9,"Viagens","Carro",1291.0],[2023,9,"Viagens","Comida",1550.0],[2023,9,"Viagens","Hotel",1638.0],[2023,9,"Viagens","Rosa",536.0],[2023,10,"Alimentação","Açougue",139.0],[2023,10,"Alimentação","Comida de rua",15.0],[2023,10,"Alimentação","Mercado",310.0],[2023,10,"Alimentação","Restaurante Gourmet",206.0],[2023,10,"Alimentação","Restaurante dia-a-dia",718.0],[2023,10,"Alimentação","iFood",106.0],[2023,10,"Despesas Fixas","Apple",15.0],[2023,10,"Despesas Fixas","Cabelo",96.0],[2023,10,"Despesas Fixas","Condominio",633.0],[2023,10,"Despesas Fixas","Gas",272.0],[2023,10,"Despesas Fixas","Internet",130.0],[2023,10,"Despesas Fixas","Limpeza",400.0],[2023,10,"Despesas Fixas","Luz",91.0],[2023,10,"Despesas Fixas","Plano de Celular",92.0],[2023,10,"Despesas Fixas","YouTube",21.0],[2023,10,"Entreterimento","Balada",70.0],[2023,10,"Entreterimento","Ingresso",328.0],[2023,10,"Entreterimento","Outros",250.0],[2023,10,"Itens","Lampada",48.0],[2023,10,"Itens","Sapateira",37.0],[2023,10,"Saude","Farmacia",50.0],[2023,10,"Transporte","Estacionamento",18.0],[2023,10,"Transporte","Gasolina",50.0],[2023,10,"Viagens","Balneario",952.0],[2023,10,"Viagens","Comida",828.0],[2023,11,"Alimentação","Açougue",30.0],[2023,11,"Alimentação","Comida de rua",129.0],[2023,11,"Alimentação","Mercado",645.0],[2023,11,"Alimentação","Restaurante Gourmet",804.0],[2023,11,"Alimentação","Restaurante dia-a-dia",769.0],[2023,11,"Alimentação","iFood",100.0],[2023,11,"Despesas Fixas","Academia",140.0],[2023,11,"Despesas Fixas","Apple",15.0],[2023,11,"Despesas Fixas","Aula Tennis",450.0],[2023,11,"Despesas Fixas","Cabelo",60.0],[2023,11,"Despesas Fixas","Condominio",661.0],[2023,11,"Despesas Fixas","Gas",170.0],[2023,11,"Despesas Fixas","Internet",130.0],[2023,11,"Despesas Fixas","Limpeza",400.0],[2023,11,"Despesas Fixas","Luz",98.0],[2023,11,"Despesas Fixas","Plano de Celular",92.0],[2023,11,"Despesas Fixas","YouTube",21.0],[2023,11,"Eletronicos","Jogo do Play",364.0],[2023,11,"Entreterimento","Balada",227.0],[2023,11,"Entreterimento","Ingresso",72.0],[2023,11,"Itens","Filtro",117.0],[2023,11,"Itens","Flor",20.0],[2023,11,"Saude","Farmacia",120.0],[2023,11,"Transporte","Despesas do Carro",203.0],[2023,11,"Transporte","Estacionamento",18.0],[2023,11,"Transporte","Estar",30.0],[2023,11,"Transporte","Gasolina",477.0],[2023,11,"Transporte","Uber",64.0],[2023,11,"Viagens","Carro",165.0],[2023,12,"Alimentação","Açougue",384.0],[2023,12,"Alimentação","Comida de rua",16.0],[2023,12,"Alimentação","Mercado",387.0],[2023,12,"Alimentação","Restaurante Gourmet",366.0],[2023,12,"Alimentação","Restaurante dia-a-dia",679.0],[2023,12,"Alimentação","iFood",87.0],[2023,12,"Despesas Fixas","Academia",140.0],[2023,12,"Despesas Fixas","Apple",15.0],[2023,12,"Despesas Fixas","Aula Tennis",720.0],[2023,12,"Despesas Fixas","Cabelo",111.0],[2023,12,"Despesas Fixas","Condominio",725.0],[2023,12,"Despesas Fixas","Gas",298.0],[2023,12,"Despesas Fixas","Internet",130.0],[2023,12,"Despesas Fixas","Limpeza",400.0],[2023,12,"Despesas Fixas","Luz",104.0],[2023,12,"Despesas Fixas","Plano de Celular",92.0],[2023,12,"Despesas Fixas","YouTube",21.0],[2023,12,"Entreterimento","Balada",80.0],[2023,12,"Entreterimento","Outros",300.0],[2023,12,"Itens","Presente",653.0],[2023,12,"Saude","Farmacia",123.0],[2023,12,"Transporte","Despesas do Carro",432.0],[2023,12,"Transporte","Estacionamento",46.0],[2023,12,"Transporte","Estar",90.0],[2023,12,"Transporte","Gasolina",486.0],[2023,12,"Viagens","Carro",385.0],[2023,12,"Viagens","Fernando de Noronha",625.0],[2023,12,"Viagens","Rosa",412.0],[2024,1,"Alimentação","Açougue",94.0],[2024,1,"Alimentação","Comida de rua",9.0],[2024,1,"Alimentação","Mercado",1033.0],[2024,1,"Alimentação","Restaurante Gourmet",120.0],[2024,1,"Alimentação","Restaurante dia-a-dia",750.0],[2024,1,"Alimentação","iFood",110.0],[2024,1,"Despesas Fixas","Academia",140.0],[2024,1,"Despesas Fixas","Apple",15.0],[2024,1,"Despesas Fixas","Condominio",671.0],[2024,1,"Despesas Fixas","Gas",1.0],[2024,1,"Despesas Fixas","Internet",130.0],[2024,1,"Despesas Fixas","Limpeza",600.0],[2024,1,"Despesas Fixas","Luz",98.0],[2024,1,"Despesas Fixas","Plano de Celular",92.0],[2024,1,"Despesas Fixas","YouTube",21.0],[2024,1,"Entreterimento","Balada",112.0],[2024,1,"Itens","Presente",606.0],[2024,1,"Transporte","Despesas do Carro",203.0],[2024,1,"Transporte","Estacionamento",61.0],[2024,1,"Transporte","Estar",30.0],[2024,1,"Transporte","Uber",32.0],[2024,1,"Viagens","Cruzeiro",2754.0],[2024,1,"Viagens","Fernando de Noronha",325.0],[2024,1,"Viagens","Passagem",592.0],[2024,1,"Viagens","Rosa",1260.0],[2024,2,"Alimentação","Mercado",1225.0],[2024,2,"Alimentação","Restaurante Gourmet",734.0],[2024,2,"Alimentação","Restaurante dia-a-dia",830.0],[2024,2,"Alimentação","iFood",56.0],[2024,2,"Despesas Fixas","Academia",140.0],[2024,2,"Despesas Fixas","Apple",15.0],[2024,2,"Despesas Fixas","Aula Tennis",800.0],[2024,2,"Despesas Fixas","Cabelo",111.0],[2024,2,"Despesas Fixas","Condominio",1315.0],[2024,2,"Despesas Fixas","Gas",153.0],[2024,2,"Despesas Fixas","Internet",263.0],[2024,2,"Despesas Fixas","Limpeza",600.0],[2024,2,"Despesas Fixas","Luz",101.0],[2024,2,"Despesas Fixas","Plano de Celular",184.0],[2024,2,"Despesas Fixas","YouTube",21.0],[2024,2,"Eletronicos","Jogo do Play",257.0],[2024,2,"Entreterimento","Balada",498.0],[2024,2,"Entreterimento","Cinema",100.0],[2024,2,"Entreterimento","Ingresso",105.0],[2024,2,"Itens","Gato",2381.0],[2024,2,"Saude","Farmacia",130.0],[2024,2,"Transporte","Estacionamento",101.0],[2024,2,"Transporte","Estar",30.0],[2024,2,"Transporte","Gasolina",172.0],[2024,2,"Transporte","Uber",104.0],[2024,2,"Viagens","Cruzeiro",5700.0],[2024,2,"Viagens","Dolar",169.0],[2024,2,"Viagens","Fernando de Noronha",325.0],[2024,3,"Alimentação","Açougue",240.0],[2024,3,"Alimentação","Mercado",736.0],[2024,3,"Alimentação","Restaurante Gourmet",573.0],[2024,3,"Alimentação","Restaurante dia-a-dia",851.0],[2024,3,"Alimentação","iFood",95.0],[2024,3,"Despesas Fixas","Academia",140.0],[2024,3,"Despesas Fixas","Apple",15.0],[2024,3,"Despesas Fixas","Aula Tennis",910.0],[2024,3,"Despesas Fixas","Cabelo",60.0],[2024,3,"Despesas Fixas","Gas",69.0],[2024,3,"Despesas Fixas","IPTU",450.0],[2024,3,"Despesas Fixas","Internet",130.0],[2024,3,"Despesas Fixas","Limpeza",415.0],[2024,3,"Despesas Fixas","Luz",131.0],[2024,3,"Despesas Fixas","Plano de Celular",92.0],[2024,3,"Despesas Fixas","YouTube",21.0],[2024,3,"Eletronicos","Jogo do Play",257.0],[2024,3,"Entreterimento","Balada",110.0],[2024,3,"Entreterimento","Outros",200.0],[2024,3,"Saude","Farmacia",49.0],[2024,3,"Transporte","Estar",30.0],[2024,3,"Viagens","Balneario",832.0],[2024,3,"Viagens","Dolar",135.0],[2024,3,"Viagens","Fernando de Noronha",325.0],[2024,3,"Viagens","Hotel",290.0],[2024,3,"Viagens","Passagem",175.0],[2024,4,"Alimentação","Mercado",284.0],[2024,4,"Alimentação","Restaurante Gourmet",358.0],[2024,4,"Alimentação","Restaurante dia-a-dia",362.0],[2024,4,"Alimentação","iFood",168.0],[2024,4,"Despesas Fixas","Academia",140.0],[2024,4,"Despesas Fixas","Apple",15.0],[2024,4,"Despesas Fixas","Aula Tennis",330.0],[2024,4,"Despesas Fixas","Cabelo",51.0],[2024,4,"Despesas Fixas","Condominio",700.0],[2024,4,"Despesas Fixas","Gas",85.0],[2024,4,"Despesas Fixas","Internet",130.0],[2024,4,"Despesas Fixas","Limpeza",200.0],[2024,4,"Despesas Fixas","Luz",128.0],[2024,4,"Despesas Fixas","YouTube",21.0],[2024,4,"Saude","Farmacia",143.0],[2024,4,"Transporte","Gasolina",174.0],[2024,4,"Transporte","Uber",239.0],[2024,4,"Viagens","Fernando de Noronha",325.0],[2024,4,"Viagens","SP",1044.0],[2024,5,"Alimentação","Açougue",159.0],[2024,5,"Alimentação","Mercado",1129.0],[2024,5,"Alimentação","Restaurante Gourmet",170.0],[2024,5,"Alimentação","Restaurante dia-a-dia",517.0],[2024,5,"Despesas Fixas","Apple",15.0],[2024,5,"Despesas Fixas","Aula Tennis",1230.0],[2024,5,"Despesas Fixas","Cabelo",60.0],[2024,5,"Despesas Fixas","Condominio",647.0],[2024,5,"Despesas Fixas","Gas",39.0],[2024,5,"Despesas Fixas","IPTU",313.0],[2024,5,"Despesas Fixas","Internet",130.0],[2024,5,"Despesas Fixas","Limpeza",600.0],[2024,5,"Despesas Fixas","Luz",99.0],[2024,5,"Despesas Fixas","Plano de Celular",194.0],[2024,5,"Despesas Fixas","YouTube",21.0],[2024,5,"Entreterimento","Balada",289.0],[2024,5,"Itens","Flor",100.0],[2024,5,"Itens","Gato",110.0],[2024,5,"Saude","Farmacia",154.0],[2024,5,"Saude","Medico",350.0],[2024,5,"Transporte","Estacionamento",18.0],[2024,5,"Transporte","Estar",90.0],[2024,5,"Transporte","Gasolina",228.0],[2024,5,"Transporte","Uber",127.0],[2024,5,"Viagens","Cruzeiro",620.0],[2024,5,"Viagens","Fernando de Noronha",325.0],[2024,5,"Viagens Poker","Curso",194.0],[2024,6,"Alimentação","Mercado",905.0],[2024,6,"Alimentação","Restaurante Gourmet",201.0],[2024,6,"Alimentação","Restaurante dia-a-dia",687.0],[2024,6,"Alimentação","iFood",115.0],[2024,6,"Despesas Fixas","Apple",15.0],[2024,6,"Despesas Fixas","Aula Tennis",950.0],[2024,6,"Despesas Fixas","Cabelo",60.0],[2024,6,"Despesas Fixas","Condominio",725.0],[2024,6,"Despesas Fixas","Gas",156.0],[2024,6,"Despesas Fixas","IPTU",149.0],[2024,6,"Despesas Fixas","Internet",130.0],[2024,6,"Despesas Fixas","Limpeza",400.0],[2024,6,"Despesas Fixas","Luz",92.0],[2024,6,"Despesas Fixas","Plano de Celular",102.0],[2024,6,"Despesas Fixas","YouTube",21.0],[2024,6,"Entreterimento","Balada",270.0],[2024,6,"Entreterimento","Outros",71.0],[2024,6,"Itens","Presente",130.0],[2024,6,"Itens","Raquete Tennis",227.0],[2024,6,"Saude","Medico",350.0],[2024,6,"Transporte","Estacionamento",16.0],[2024,6,"Transporte","Estar",120.0],[2024,6,"Transporte","Gasolina",521.0],[2024,6,"Transporte","Uber",13.0],[2024,6,"Viagens","Cruzeiro",620.0],[2024,6,"Viagens","Fernando de Noronha",325.0],[2024,6,"Viagens Poker","Curso",194.0],[2024,7,"Alimentação","Açougue",62.0],[2024,7,"Alimentação","Comida de rua",75.0],[2024,7,"Alimentação","Mercado",1120.0],[2024,7,"Alimentação","Restaurante Gourmet",116.0],[2024,7,"Alimentação","Restaurante dia-a-dia",542.0],[2024,7,"Alimentação","iFood",141.0],[2024,7,"Despesas Fixas","Apple",15.0],[2024,7,"Despesas Fixas","Aula Tennis",37.0],[2024,7,"Despesas Fixas","Cabelo",111.0],[2024,7,"Despesas Fixas","Condominio",641.0],[2024,7,"Despesas Fixas","Gas",160.0],[2024,7,"Despesas Fixas","IPTU",152.0],[2024,7,"Despesas Fixas","Internet",130.0],[2024,7,"Despesas Fixas","Limpeza",415.0],[2024,7,"Despesas Fixas","Luz",101.0],[2024,7,"Despesas Fixas","YouTube",21.0],[2024,7,"Entreterimento","Balada",388.0],[2024,7,"Entreterimento","Cinema",28.0],[2024,7,"Itens","Amazon",130.0],[2024,7,"Itens","Presente",247.0],[2024,7,"Itens","itens",90.0],[2024,7,"Saude","Farmacia",217.0],[2024,7,"Saude","Medico",350.0],[2024,7,"Transporte","Estacionamento",30.0],[2024,7,"Transporte","Estar",120.0],[2024,7,"Transporte","Gasolina",256.0],[2024,7,"Transporte","Uber",64.0],[2024,7,"Viagens","Cruzeiro",1255.0],[2024,7,"Viagens","Fernando de Noronha",803.0],[2024,7,"Viagens Poker","Curso",194.0],[2024,8,"Alimentação","Açougue",134.0],[2024,8,"Alimentação","Mercado",635.0],[2024,8,"Alimentação","Restaurante Gourmet",219.0],[2024,8,"Alimentação","Restaurante dia-a-dia",755.0],[2024,8,"Alimentação","iFood",130.0],[2024,8,"Despesas Fixas","Apple",15.0],[2024,8,"Despesas Fixas","Aula Tennis",870.0],[2024,8,"Despesas Fixas","Cabelo",60.0],[2024,8,"Despesas Fixas","Condominio",717.0],[2024,8,"Despesas Fixas","Gas",206.0],[2024,8,"Despesas Fixas","IPTU",151.0],[2024,8,"Despesas Fixas","Internet",130.0],[2024,8,"Despesas Fixas","Limpeza",434.0],[2024,8,"Despesas Fixas","Luz",103.0],[2024,8,"Despesas Fixas","Plano de Celular",204.0],[2024,8,"Despesas Fixas","YouTube",21.0],[2024,8,"Entreterimento","Balada",673.0],[2024,8,"Entreterimento","Outros",100.0],[2024,8,"Itens","Amazon",49.0],[2024,8,"Saude","Farmacia",224.0],[2024,8,"Saude","Medico",350.0],[2024,8,"Transporte","Estacionamento",77.0],[2024,8,"Transporte","Estar",120.0],[2024,8,"Transporte","Gasolina",253.0],[2024,8,"Viagens","Cruzeiro",2754.0],[2024,8,"Viagens","Fernando de Noronha",2951.0],[2024,8,"Viagens Poker","Curso",194.0],[2024,9,"Alimentação","Açougue",263.0],[2024,9,"Alimentação","Mercado",886.0],[2024,9,"Alimentação","Restaurante Gourmet",183.0],[2024,9,"Alimentação","Restaurante dia-a-dia",348.0],[2024,9,"Alimentação","iFood",133.0],[2024,9,"Despesas Fixas","Gas",195.0],[2024,9,"Despesas Fixas","IPTU",149.0],[2024,9,"Despesas Fixas","Internet",130.0],[2024,9,"Despesas Fixas","Limpeza",200.0],[2024,9,"Despesas Fixas","Luz",81.0],[2024,9,"Entreterimento","Balada",240.0],[2024,9,"Transporte","Estacionamento",16.0],[2024,9,"Transporte","Estar",30.0],[2024,9,"Transporte","Gasolina",258.0],[2024,9,"Viagens","Airbnb",1145.0],[2024,9,"Viagens","Balneario",1028.0],[2024,9,"Viagens Poker","Curso",194.0],[2024,10,"Alimentação","Açougue",105.0],[2024,10,"Alimentação","Marmitas",186.0],[2024,10,"Alimentação","Mercado",720.0],[2024,10,"Alimentação","Restaurante dia-a-dia",1095.0],[2024,10,"Despesas Fixas","Apple",15.0],[2024,10,"Despesas Fixas","Aula Tennis",50.0],[2024,10,"Despesas Fixas","Cabelo",111.0],[2024,10,"Despesas Fixas","Condominio",682.0],[2024,10,"Despesas Fixas","Gas",126.0],[2024,10,"Despesas Fixas","IPTU",149.0],[2024,10,"Despesas Fixas","Internet",130.0],[2024,10,"Despesas Fixas","Limpeza",640.0],[2024,10,"Despesas Fixas","Luz",89.0],[2024,10,"Despesas Fixas","Plano de Celular",102.0],[2024,10,"Despesas Fixas","YouTube",21.0],[2024,10,"Eletronicos","iPhone",9000.0],[2024,10,"Entreterimento","Balada",636.0],[2024,10,"Itens","Amazon",264.0],[2024,10,"Transporte","Estacionamento",16.0],[2024,10,"Transporte","Estar",90.0],[2024,10,"Transporte","Gasolina",768.0],[2024,10,"Transporte","Uber",139.0],[2024,10,"Viagens","Airbnb",1600.0],[2024,10,"Viagens Poker","Curso",194.0],[2024,11,"Alimentação","Comida de rua",22.0],[2024,11,"Alimentação","Marmitas",210.0],[2024,11,"Alimentação","Mercado",872.0],[2024,11,"Alimentação","Restaurante Gourmet",539.0],[2024,11,"Alimentação","Restaurante dia-a-dia",711.0],[2024,11,"Alimentação","iFood",389.0],[2024,11,"Despesas Fixas","Apple",15.0],[2024,11,"Despesas Fixas","Aula Tennis",780.0],[2024,11,"Despesas Fixas","Cabelo",120.0],[2024,11,"Despesas Fixas","Gas",151.0],[2024,11,"Despesas Fixas","IPTU",154.0],[2024,11,"Despesas Fixas","Internet",130.0],[2024,11,"Despesas Fixas","Limpeza",427.0],[2024,11,"Despesas Fixas","Luz",114.0],[2024,11,"Despesas Fixas","Plano de Celular",102.0],[2024,11,"Despesas Fixas","YouTube",21.0],[2024,11,"Entreterimento","Balada",680.0],[2024,11,"Entreterimento","Pesca",500.0],[2024,11,"Itens","Amazon",1138.0],[2024,11,"Itens","Pesca",300.0],[2024,11,"Itens","Presente",848.0],[2024,11,"Saude","Farmacia",124.0],[2024,11,"Transporte","Despesas do Carro",40.0],[2024,11,"Transporte","Estacionamento",35.0],[2024,11,"Transporte","Estar",120.0],[2024,11,"Transporte","Gasolina",274.0],[2024,11,"Transporte","Uber",59.0],[2024,11,"Viagens Poker","Comida",649.0],[2024,11,"Viagens Poker","Curso",994.0],[2024,11,"Viagens Poker","Hotel",438.0],[2024,12,"Alimentação","Açougue",85.0],[2024,12,"Alimentação","Marmitas",144.0],[2024,12,"Alimentação","Mercado",1101.0],[2024,12,"Alimentação","Restaurante Gourmet",75.0],[2024,12,"Alimentação","Restaurante dia-a-dia",531.0],[2024,12,"Despesas Fixas","Apple",15.0],[2024,12,"Despesas Fixas","Cabelo",60.0],[2024,12,"Despesas Fixas","Gas",141.0],[2024,12,"Despesas Fixas","IPTU",149.0],[2024,12,"Despesas Fixas","Internet",136.0],[2024,12,"Despesas Fixas","Limpeza",660.0],[2024,12,"Despesas Fixas","Luz",101.0],[2024,12,"Despesas Fixas","Plano de Celular",102.0],[2024,12,"Despesas Fixas","YouTube",21.0],[2024,12,"Itens","Amazon",166.0],[2024,12,"Itens","Presente",385.0],[2024,12,"Transporte","Despesas do Carro",90.0],[2024,12,"Transporte","Gasolina",512.0],[2024,12,"Viagens","Caioba",587.0],[2024,12,"Viagens Poker","Curso",694.0],[2025,1,"Alimentação","Açougue",125.0],[2025,1,"Alimentação","Mercado",958.0],[2025,1,"Alimentação","Restaurante Gourmet",718.0],[2025,1,"Alimentação","Restaurante dia-a-dia",916.0],[2025,1,"Alimentação","iFood",188.0],[2025,1,"Despesas Fixas","Apple",15.0],[2025,1,"Despesas Fixas","Aula Tennis",110.0],[2025,1,"Despesas Fixas","Cabelo",65.0],[2025,1,"Despesas Fixas","Futebol",30.0],[2025,1,"Despesas Fixas","Gas",123.0],[2025,1,"Despesas Fixas","Internet",136.0],[2025,1,"Despesas Fixas","Limpeza",400.0],[2025,1,"Despesas Fixas","Luz",109.0],[2025,1,"Despesas Fixas","Plano de Celular",102.0],[2025,1,"Despesas Fixas","YouTube",21.0],[2025,1,"Entreterimento","Balada",207.0],[2025,1,"Entreterimento","Cinema",122.0],[2025,1,"Entreterimento","Pesca",83.0],[2025,1,"Itens","Lustre",315.0],[2025,1,"Itens","Presente",543.0],[2025,1,"Itens","Terno",600.0],[2025,1,"Itens","Visto",64.0],[2025,1,"Saude","Farmacia",60.0],[2025,1,"Saude","Medico",165.0],[2025,1,"Transporte","Estacionamento",91.0],[2025,1,"Transporte","Estar",30.0],[2025,1,"Transporte","Gasolina",509.0],[2025,1,"Transporte","Uber",138.0],[2025,1,"Viagens","Passagem",530.0],[2025,1,"Viagens Poker","Curso",1294.0],[2025,2,"Alimentação","Açougue",227.0],[2025,2,"Alimentação","Mercado",759.0],[2025,2,"Alimentação","Restaurante Gourmet",208.0],[2025,2,"Alimentação","Restaurante dia-a-dia",815.0],[2025,2,"Despesas Fixas","Apple",15.0],[2025,2,"Despesas Fixas","Aula Tennis",940.0],[2025,2,"Despesas Fixas","Cabelo",65.0],[2025,2,"Despesas Fixas","Limpeza",421.0],[2025,2,"Despesas Fixas","Luz",134.0],[2025,2,"Despesas Fixas","Plano de Celular",102.0],[2025,2,"Despesas Fixas","YouTube",21.0],[2025,2,"Entreterimento","Balada",333.0],[2025,2,"Itens","Amazon",354.0],[2025,2,"Itens","Quadro",760.0],[2025,2,"Itens","Terno",600.0],[2025,2,"Saude","Farmacia",34.0],[2025,2,"Transporte","Estacionamento",18.0],[2025,2,"Transporte","Estar",60.0],[2025,2,"Transporte","Gasolina",277.0],[2025,2,"Transporte","Uber",109.0],[2025,2,"Viagens","Airbnb",2097.0],[2025,2,"Viagens","Comida",888.0],[2025,2,"Viagens","Passagem",530.0],[2025,2,"Viagens Poker","ChatGPT",100.0],[2025,2,"Viagens Poker","Curso",694.0],[2025,3,"Alimentação","Açougue",160.0],[2025,3,"Alimentação","Mercado",505.0],[2025,3,"Alimentação","Restaurante Gourmet",814.0],[2025,3,"Alimentação","Restaurante dia-a-dia",647.0],[2025,3,"Despesas Fixas","Apple",15.0],[2025,3,"Despesas Fixas","Cabelo",125.0],[2025,3,"Despesas Fixas","Gas",210.0],[2025,3,"Despesas Fixas","IPTU",1942.0],[2025,3,"Despesas Fixas","Internet",270.0],[2025,3,"Despesas Fixas","Limpeza",458.0],[2025,3,"Despesas Fixas","Luz",133.0],[2025,3,"Despesas Fixas","Plano de Celular",102.0],[2025,3,"Despesas Fixas","YouTube",21.0],[2025,3,"Entreterimento","Balada",185.0],[2025,3,"Itens","Flor",96.0],[2025,3,"Itens","Presente",250.0],[2025,3,"Itens","Terno",600.0],[2025,3,"Itens","itens",233.0],[2025,3,"Saude","Farmacia",32.0],[2025,3,"Transporte","Despesas do Carro",90.0],[2025,3,"Transporte","Estacionamento",28.0],[2025,3,"Transporte","Gasolina",293.0],[2025,3,"Transporte","Uber",51.0],[2025,3,"Viagens","Dolar",404.0],[2025,3,"Viagens","Passagem",530.0],[2025,3,"Viagens Poker","ChatGPT",120.0],[2025,3,"Viagens Poker","Curso",194.0],[2025,4,"Alimentação","Mercado",626.0],[2025,4,"Alimentação","Restaurante Gourmet",404.0],[2025,4,"Alimentação","Restaurante dia-a-dia",990.0],[2025,4,"Alimentação","iFood",40.0],[2025,4,"Despesas Fixas","Apple",15.0],[2025,4,"Despesas Fixas","Aula Tennis",20.0],[2025,4,"Despesas Fixas","Internet",139.0],[2025,4,"Despesas Fixas","Limpeza",400.0],[2025,4,"Despesas Fixas","Luz",105.0],[2025,4,"Despesas Fixas","Plano de Celular",102.0],[2025,4,"Despesas Fixas","YouTube",21.0],[2025,4,"Entreterimento","Balada",821.0],[2025,4,"Entreterimento","Massagem",75.0],[2025,4,"Itens","Amazon",48.0],[2025,4,"Itens","Presente",147.0],[2025,4,"Itens","Terno",600.0],[2025,4,"Saude","Farmacia",254.0],[2025,4,"Transporte","Despesas do Carro",218.0],[2025,4,"Transporte","Estacionamento",24.0],[2025,4,"Transporte","Gasolina",559.0],[2025,4,"Transporte","Uber",28.0],[2025,4,"Viagens","Airbnb",3000.0],[2025,4,"Viagens","Passagem",530.0],[2025,4,"Viagens Poker","ChatGPT",120.0],[2025,4,"Viagens Poker","Curso",194.0],[2025,5,"Alimentação","Mercado",594.0],[2025,5,"Alimentação","Restaurante dia-a-dia",636.0],[2025,5,"Alimentação","iFood",199.0],[2025,5,"Despesas Fixas","Apple",15.0],[2025,5,"Despesas Fixas","Aula Tennis",820.0],[2025,5,"Despesas Fixas","Cabelo",125.0],[2025,5,"Despesas Fixas","Gas",270.0],[2025,5,"Despesas Fixas","Limpeza",400.0],[2025,5,"Despesas Fixas","Luz",93.0],[2025,5,"Despesas Fixas","Plano de Celular",102.0],[2025,5,"Despesas Fixas","YouTube",21.0],[2025,5,"Entreterimento","Balada",501.0],[2025,5,"Itens","Terno",600.0],[2025,5,"Transporte","Estacionamento",15.0],[2025,5,"Transporte","Gasolina",271.0],[2025,5,"Transporte","Uber",40.0],[2025,5,"Viagens","Airbnb",363.0],[2025,5,"Viagens","Passagem",6563.0],[2025,5,"Viagens Poker","ChatGPT",120.0],[2025,5,"Viagens Poker","Comida",1837.0],[2025,6,"Alimentação","Açougue",380.0],[2025,6,"Alimentação","Mercado",1210.0],[2025,6,"Alimentação","Restaurante Gourmet",750.0],[2025,6,"Alimentação","Restaurante dia-a-dia",1275.0],[2025,6,"Alimentação","iFood",95.0],[2025,6,"Despesas Fixas","Apple",15.0],[2025,6,"Despesas Fixas","Cabelo",65.0],[2025,6,"Despesas Fixas","Gas",186.0],[2025,6,"Despesas Fixas","Internet",273.0],[2025,6,"Despesas Fixas","Limpeza",493.0],[2025,6,"Despesas Fixas","Plano de Celular",102.0],[2025,6,"Despesas Fixas","Spotify",35.0],[2025,6,"Despesas Fixas","YouTube",21.0],[2025,6,"Entreterimento","Balada",757.0],[2025,6,"Entreterimento","Cinema",75.0],[2025,6,"Itens","Camiseta",700.0],[2025,6,"Itens","Presente",424.0],[2025,6,"Itens","Vinhos",502.0],[2025,6,"Saude","Farmacia",22.0],[2025,6,"Transporte","Estacionamento",89.0],[2025,6,"Transporte","Estar",30.0],[2025,6,"Transporte","Gasolina",284.0],[2025,6,"Viagens","Airbnb",440.0],[2025,6,"Viagens","Dolar",1382.0],[2025,6,"Viagens","Passagem",1370.0],[2025,6,"Viagens Poker","Curso",117.0],[2025,7,"Alimentação","Mercado",476.0],[2025,7,"Alimentação","Restaurante dia-a-dia",1531.0],[2025,7,"Alimentação","iFood",69.0],[2025,7,"Despesas Fixas","Apple",15.0],[2025,7,"Despesas Fixas","Cabelo",60.0],[2025,7,"Despesas Fixas","Gas",255.0],[2025,7,"Despesas Fixas","Internet",136.0],[2025,7,"Despesas Fixas","Limpeza",651.0],[2025,7,"Despesas Fixas","Luz",98.0],[2025,7,"Despesas Fixas","Plano de Celular",102.0],[2025,7,"Despesas Fixas","Spotify",35.0],[2025,7,"Despesas Fixas","YouTube",21.0],[2025,7,"Entreterimento","Balada",629.0],[2025,7,"Itens","Amazon",436.0],[2025,7,"Itens","Quadro",550.0],[2025,7,"Itens","Roupa",279.0],[2025,7,"Transporte","Estacionamento",61.0],[2025,7,"Transporte","Gasolina",280.0],[2025,7,"Transporte","Uber",40.0],[2025,7,"Viagens","Airbnb",2500.0],[2025,7,"Viagens","Passagem",3070.0],[2025,7,"Viagens Poker","Curso",120.0],[2025,8,"Alimentação","Açougue",230.0],[2025,8,"Alimentação","Comida de rua",16.0],[2025,8,"Alimentação","Mercado",278.0],[2025,8,"Alimentação","Restaurante Gourmet",549.0],[2025,8,"Alimentação","Restaurante dia-a-dia",1193.0],[2025,8,"Alimentação","iFood",391.0],[2025,8,"Despesas Fixas","Apple",15.0],[2025,8,"Despesas Fixas","Aula Tennis",1060.0],[2025,8,"Despesas Fixas","Cabelo",60.0],[2025,8,"Despesas Fixas","Gas",254.0],[2025,8,"Despesas Fixas","Internet",136.0],[2025,8,"Despesas Fixas","Limpeza",400.0],[2025,8,"Despesas Fixas","Luz",87.0],[2025,8,"Despesas Fixas","Plano de Celular",102.0],[2025,8,"Despesas Fixas","Spotify",35.0],[2025,8,"Despesas Fixas","YouTube",21.0],[2025,8,"Entreterimento","Cinema",35.0],[2025,8,"Itens","Amazon",90.0],[2025,8,"Itens","Presente",84.0],[2025,8,"Transporte","Estacionamento",83.0],[2025,8,"Transporte","Estar",30.0],[2025,8,"Transporte","Gasolina",455.0],[2025,8,"Transporte","Pedagio",39.0],[2025,8,"Viagens","Passagem",2752.0],[2025,8,"Viagens Poker","ChatGPT",100.0],[2025,9,"Alimentação","Açougue",170.0],[2025,9,"Alimentação","Comida de rua",15.0],[2025,9,"Alimentação","Mercado",269.0],[2025,9,"Alimentação","Restaurante dia-a-dia",1002.0],[2025,9,"Alimentação","iFood",78.0],[2025,9,"Despesas Fixas","Apple",15.0],[2025,9,"Despesas Fixas","Aula Tennis",73.0],[2025,9,"Despesas Fixas","Cabelo",125.0],[2025,9,"Despesas Fixas","Gas",243.0],[2025,9,"Despesas Fixas","Internet",138.0],[2025,9,"Despesas Fixas","Limpeza",420.0],[2025,9,"Despesas Fixas","Luz",96.0],[2025,9,"Despesas Fixas","Plano de Celular",102.0],[2025,9,"Despesas Fixas","Spotify",35.0],[2025,9,"Despesas Fixas","YouTube",21.0],[2025,9,"Eletronicos","PC",3900.0],[2025,9,"Entreterimento","Balada",691.0],[2025,9,"Entreterimento","Pesca",218.0],[2025,9,"Itens","Amazon",28.0],[2025,9,"Saude","Farmacia",73.0],[2025,9,"Transporte","Estacionamento",19.0],[2025,9,"Transporte","Gasolina",270.0],[2025,9,"Transporte","Uber",50.0],[2025,9,"Viagens","Comida",807.0],[2025,9,"Viagens","Dolar",11800.0],[2025,9,"Viagens","Entreterimento",120.0],[2025,9,"Viagens","Passagem",1370.0],[2025,9,"Viagens Poker","ChatGPT",100.0],[2025,10,"Alimentação","Mercado",564.0],[2025,10,"Alimentação","Restaurante dia-a-dia",967.0],[2025,10,"Alimentação","iFood",275.0],[2025,10,"Despesas Fixas","Academia",140.0],[2025,10,"Despesas Fixas","Apple",15.0],[2025,10,"Despesas Fixas","Aula Tennis",210.0],[2025,10,"Despesas Fixas","Cabelo",70.0],[2025,10,"Despesas Fixas","Gas",96.0],[2025,10,"Despesas Fixas","Internet",136.0],[2025,10,"Despesas Fixas","Limpeza",480.0],[2025,10,"Despesas Fixas","Luz",84.0],[2025,10,"Despesas Fixas","Plano de Celular",130.0],[2025,10,"Despesas Fixas","Spotify",35.0],[2025,10,"Despesas Fixas","YouTube",21.0],[2025,10,"Eletronicos","Controle",12.0],[2025,10,"Eletronicos","Jogo do Play",300.0],[2025,10,"Eletronicos","PC",2580.0],[2025,10,"Entreterimento","Balada",319.0],[2025,10,"Itens","Moveis",680.0],[2025,10,"Itens","Whey",293.0],[2025,10,"Saude","Farmacia",19.0],[2025,10,"Transporte","Gasolina",551.0],[2025,10,"Transporte","Uber",37.0],[2025,10,"Viagens Poker","ChatGPT",100.0],[2025,11,"Alimentação","Açougue",73.0],[2025,11,"Alimentação","Comida de rua",17.0],[2025,11,"Alimentação","Mercado",478.0],[2025,11,"Alimentação","Restaurante dia-a-dia",484.0],[2025,11,"Alimentação","iFood",210.0],[2025,11,"Despesas Fixas","Academia",140.0],[2025,11,"Despesas Fixas","Apple",15.0],[2025,11,"Despesas Fixas","Cabelo",131.0],[2025,11,"Despesas Fixas","Gas",181.0],[2025,11,"Despesas Fixas","Internet",143.0],[2025,11,"Despesas Fixas","Limpeza",400.0],[2025,11,"Despesas Fixas","Luz",157.0],[2025,11,"Despesas Fixas","Plano de Celular",130.0],[2025,11,"Despesas Fixas","Spotify",40.0],[2025,11,"Despesas Fixas","YouTube",21.0],[2025,11,"Eletronicos","PC",2930.0],[2025,11,"Entreterimento","Outros",130.0],[2025,11,"Entreterimento","Pesca",267.0],[2025,11,"Itens","Amazon",652.0],[2025,11,"Itens","Curso",697.0],[2025,11,"Itens","itens",60.0],[2025,11,"Saude","Farmacia",277.0],[2025,11,"Transporte","Despesas do Carro",1000.0],[2025,11,"Transporte","Estacionamento",75.0],[2025,11,"Transporte","Estar",30.0],[2025,11,"Transporte","Gasolina",564.0],[2025,11,"Viagens","Airbnb",1409.0],[2025,11,"Viagens Poker","Airbnb",2390.0],[2025,11,"Viagens Poker","ChatGPT",100.0],[2025,11,"Viagens Poker","Comida",2724.0],[2025,11,"Viagens Poker","Passagem",261.0],[2025,12,"Alimentação","Mercado",697.0],[2025,12,"Alimentação","Restaurante Gourmet",214.0],[2025,12,"Alimentação","Restaurante dia-a-dia",1479.0],[2025,12,"Alimentação","iFood",95.0],[2025,12,"Despesas Fixas","Academia",947.0],[2025,12,"Despesas Fixas","Cabelo",70.0],[2025,12,"Despesas Fixas","Gas",132.0],[2025,12,"Despesas Fixas","Internet",143.0],[2025,12,"Despesas Fixas","Limpeza",454.0],[2025,12,"Despesas Fixas","Luz",123.0],[2025,12,"Despesas Fixas","Plano de Celular",130.0],[2025,12,"Itens","Amazon",510.0],[2025,12,"Itens","Presente",346.0],[2025,12,"Saude","Farmacia",65.0],[2025,12,"Transporte","Estacionamento",37.0],[2025,12,"Transporte","Estar",30.0],[2025,12,"Transporte","Gasolina",527.0],[2025,12,"Transporte","Pedagio",66.0],[2025,12,"Viagens","Atami",693.0],[2025,12,"Viagens","Hotel",2345.0],[2026,1,"Alimentação","Açougue",282.0],[2026,1,"Alimentação","Comida de rua",152.0],[2026,1,"Alimentação","Mercado",1139.0],[2026,1,"Alimentação","Restaurante Gourmet",262.0],[2026,1,"Alimentação","Restaurante dia-a-dia",1781.0],[2026,1,"Alimentação","iFood",68.0],[2026,1,"Despesas Fixas","Academia",1025.0],[2026,1,"Despesas Fixas","Cabelo",70.0],[2026,1,"Despesas Fixas","Gas",109.0],[2026,1,"Despesas Fixas","Internet",83.0],[2026,1,"Despesas Fixas","Limpeza",641.0],[2026,1,"Despesas Fixas","Luz",159.0],[2026,1,"Despesas Fixas","Plano de Celular",181.0],[2026,1,"Entreterimento","Balada",892.0],[2026,1,"Entreterimento","Cinema",129.0],[2026,1,"Transporte","Despesas do Carro",648.0],[2026,1,"Transporte","Estacionamento",38.0],[2026,1,"Transporte","Gasolina",280.0],[2026,1,"Viagens","Hotel",3284.0],[2026,1,"Viagens","Passagem",829.0],[2026,2,"Alimentação","Mercado",154.0],[2026,2,"Alimentação","Restaurante dia-a-dia",529.0],[2026,2,"Alimentação","iFood",114.0],[2026,2,"Despesas Fixas","Academia",140.0],[2026,2,"Despesas Fixas","Cabelo",137.0],[2026,2,"Despesas Fixas","Limpeza",427.0],[2026,2,"Despesas Fixas","Luz",150.0],[2026,2,"Despesas Fixas","Plano de Celular",271.0],[2026,2,"Entreterimento","Balada",400.0],[2026,2,"Saude","Farmacia",104.0],[2026,2,"Saude","Seguro",344.0],[2026,2,"Transporte","Estacionamento",12.0],[2026,2,"Transporte","Gasolina",272.0],[2026,2,"Viagens","Airbnb",400.0],[2026,2,"Viagens","Balneario",1620.0],[2026,2,"Viagens","Dolar",23244.0],[2026,2,"Viagens","Ilha do Mel",1307.0],[2026,2,"Viagens","Japao",3818.0],[2026,3,"Alimentação","Mercado",522.0],[2026,3,"Alimentação","Restaurante Gourmet",329.0],[2026,3,"Alimentação","Restaurante dia-a-dia",1427.0],[2026,3,"Alimentação","iFood",169.0],[2026,3,"Despesas Fixas","Academia",490.0],[2026,3,"Despesas Fixas","Cabelo",70.0],[2026,3,"Despesas Fixas","Gas",137.0],[2026,3,"Despesas Fixas","Limpeza",451.0],[2026,3,"Despesas Fixas","Luz",103.0],[2026,3,"Despesas Fixas","Plano de Celular",190.0],[2026,3,"Itens","Amazon",69.0],[2026,3,"Saude","Medico",800.0],[2026,3,"Saude","Seguro",343.0],[2026,3,"Transporte","Estacionamento",38.0],[2026,3,"Transporte","Estar",30.0],[2026,3,"Transporte","Gasolina",266.0],[2026,3,"Viagens","Dolar",358.0],[2026,3,"Viagens","Japao",985.0],[2026,4,"Alimentação","Comida de rua",22.0],[2026,4,"Alimentação","Mercado",1378.0],[2026,4,"Alimentação","Restaurante dia-a-dia",1274.0],[2026,4,"Despesas Fixas","Cabelo",136.0],[2026,4,"Despesas Fixas","Limpeza",445.0],[2026,4,"Despesas Fixas","Luz",152.0],[2026,4,"Despesas Fixas","Plano de Celular",190.0],[2026,4,"Despesas Fixas","Unimed",442.0],[2026,4,"Entreterimento","Balada",549.0],[2026,4,"Entreterimento","Massagem",90.0],[2026,4,"Entreterimento","Outros",300.0],[2026,4,"Itens","Joias",593.0],[2026,4,"Saude","Farmacia",98.0],[2026,4,"Transporte","Despesas do Carro",80.0],[2026,4,"Transporte","Estacionamento",38.0],[2026,4,"Transporte","Estar",30.0],[2026,4,"Transporte","Gasolina",561.0],[2026,4,"Transporte","Pedagio",30.0],[2026,4,"Viagens Poker","Hotel",153.0],[2026,5,"Alimentação","Mercado",171.0],[2026,5,"Alimentação","Restaurante Gourmet",319.0],[2026,5,"Alimentação","Restaurante dia-a-dia",1048.0],[2026,5,"Alimentação","iFood",445.0],[2026,5,"Despesas Fixas","Cabelo",70.0],[2026,5,"Despesas Fixas","Gas",273.0],[2026,5,"Despesas Fixas","Limpeza",200.0],[2026,5,"Despesas Fixas","Luz",121.0],[2026,5,"Despesas Fixas","Plano de Celular",190.0],[2026,5,"Eletronicos","Jogo do Play",186.0],[2026,5,"Entreterimento","Outros",215.0],[2026,5,"Itens","Perfume",308.0],[2026,5,"Itens","Presente",140.0],[2026,5,"Saude","Farmacia",192.0],[2026,5,"Saude","Medico",2020.0],[2026,5,"Saude","Seguro",618.0],[2026,5,"Transporte","Despesas do Carro",480.0],[2026,5,"Transporte","Estacionamento",61.0],[2026,5,"Transporte","Estar",30.0],[2026,5,"Transporte","Gasolina",250.0],[2026,5,"Viagens","Airbnb",2345.0],[2026,5,"Viagens","Passagem",600.0],[2026,5,"Viagens Poker","Claude",110.0],[2026,6,"Alimentação","Açougue",295.0],[2026,6,"Alimentação","Mercado",534.0],[2026,6,"Alimentação","Restaurante Gourmet",256.0],[2026,6,"Alimentação","Restaurante dia-a-dia",1790.0],[2026,6,"Alimentação","iFood",116.0],[2026,6,"Despesas Fixas","Cabelo",191.0],[2026,6,"Despesas Fixas","Gas",287.0],[2026,6,"Despesas Fixas","Limpeza",450.0],[2026,6,"Despesas Fixas","Luz",136.0],[2026,6,"Despesas Fixas","Plano de Celular",190.0],[2026,6,"Despesas Fixas","Unimed",444.0],[2026,6,"Entreterimento","Balada",410.0],[2026,6,"Entreterimento","Massagem",335.0],[2026,6,"Entreterimento","Outros",350.0],[2026,6,"Saude","Farmacia",14.0],[2026,6,"Transporte","Estacionamento",100.0],[2026,6,"Transporte","Estar",30.0],[2026,6,"Transporte","Gasolina",544.0],[2026,6,"Transporte","Pedagio",24.0],[2026,6,"Viagens Poker","Claude",466.0],[2026,7,"Alimentação","Mercado",468.0],[2026,7,"Alimentação","Restaurante Gourmet",382.0],[2026,7,"Alimentação","Restaurante dia-a-dia",531.0],[2026,7,"Despesas Fixas","Academia",140.0],[2026,7,"Despesas Fixas","Limpeza",200.0],[2026,7,"Despesas Fixas","Terapia",120.0],[2026,7,"Despesas Fixas","Unimed",453.0],[2026,7,"Saude","Medico",1800.0],[2026,7,"Transporte","Despesas do Carro",60.0],[2026,7,"Viagens Poker","ChatGPT",550.0]];               // [ano, mes, categoria, item, valor]
+const MES  = ["","Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const MESL = ["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const YEARS = [...new Set(ROWS.map(r => r[0]))].sort();
+const CATS  = [...new Set(ROWS.map(r => r[2]))];
+
+const brl  = v => "R$ " + Math.round(v).toLocaleString("pt-BR");
+const brlk = v => v >= 1000 ? "R$ " + (v/1000).toFixed(v >= 10000 ? 0 : 1).replace(".", ",") + "k"
+                            : "R$ " + Math.round(v);
+// eixo: no celular o "R$ " nao cabe na margem, entao o valor vai nu (a unidade fica no titulo)
+const axk = (v, narrow) => narrow ? (v >= 1000 ? Math.round(v/1000) + "k" : String(v)) : brlk(v);
+
+const KEYS = [...new Set(ROWS.map(r => r[0]*100 + r[1]))].sort((a,b) => a-b);
+const monthTotal = Object.fromEntries(KEYS.map(k => [k, 0]));
+ROWS.forEach(r => monthTotal[r[0]*100 + r[1]] += r[4]);
+
+let filterYear = "all";
+const isNarrow = () => innerWidth < 660;
+// viewBox = largura real do container, então font-size no SVG é px de verdade
+const wOf = el => Math.max(240, Math.round(el.getBoundingClientRect().width));
+
+const rowsFiltered = () => filterYear === "all" ? ROWS : ROWS.filter(r => String(r[0]) === filterYear);
+const labelFiltro  = () => filterYear === "all" ? "todo o período" : filterYear;
+
+/* ---------------- chips ---------------- */
+const chipBox = document.getElementById("yearChips");
+[["all","Todos"], ...YEARS.map(y => [String(y), String(y)])].forEach(([v,l]) => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.type = "button"; b.textContent = l;
+  b.setAttribute("aria-pressed", String(v === "all"));
+  b.onclick = () => {
+    filterYear = v;
+    [...chipBox.children].forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+    renderDynamic();
+  };
+  chipBox.appendChild(b);
+});
+
+/* ---------------- KPIs ---------------- */
+function kpis(){
+  const rs = rowsFiltered();
+  const total = rs.reduce((s,r) => s + r[4], 0);
+  const keys = [...new Set(rs.map(r => r[0]*100 + r[1]))];
+  const mt = Object.fromEntries(keys.map(k => [k, 0]));
+  rs.forEach(r => mt[r[0]*100 + r[1]] += r[4]);
+  const ord = keys.slice().sort((a,b) => mt[b] - mt[a]);
+  const hi = ord[0], lo = ord[ord.length-1];
+  const byCat = {}; rs.forEach(r => byCat[r[2]] = (byCat[r[2]]||0) + r[4]);
+  const top = Object.entries(byCat).sort((a,b) => b[1]-a[1])[0];
+  const f = k => MESL[k%100] + "/" + Math.floor(k/100);
+
+  document.getElementById("kpis").innerHTML = [
+    ["Total gasto",     brl(total),            keys.length + " meses · " + labelFiltro(), 0],
+    ["Média mensal",    brl(total/keys.length),"≈ " + brl(total/keys.length/30) + " por dia", 0],
+    ["Mês mais caro",   brl(mt[hi]),           f(hi), 0],
+    ["Mês mais barato", brl(mt[lo]),           f(lo), 0],
+    ["Maior categoria", top[0],                brl(top[1]) + " · " + (top[1]/total*100).toFixed(0) + "% do total", 1],
+  ].map(([l,v,n,w]) =>
+    `<div class="kpi${w ? " wide" : ""}"><div class="lab">${l}</div><div class="val">${v}</div><div class="note">${n}</div></div>`
+  ).join("");
+}
+
+/* ---------------- linha mensal (com scrubbing) ---------------- */
+function lineChart(){
+  const box = document.getElementById("cLine");
+  const W = wOf(box), narrow = isNarrow();
+  const ml = narrow ? 40 : 58, mr = narrow ? 8 : 14, mt = 16, mb = narrow ? 30 : 42;
+  const H = narrow ? 220 : 300, iw = W - ml - mr, ih = H - mt - mb;
+  const vals = KEYS.map(k => monthTotal[k]);
+  const max = Math.max(...vals) * 1.09;
+  const avg = vals.reduce((a,b) => a+b, 0) / vals.length;
+  const X = i => ml + i * iw / (KEYS.length - 1);
+  const Y = v => mt + ih - v/max*ih;
+  const step = iw / (KEYS.length - 1);
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gasto mensal de ${MESL[KEYS[0]%100]} de ${Math.floor(KEYS[0]/100)} a ${MESL[KEYS.at(-1)%100]} de ${Math.floor(KEYS.at(-1)/100)}">`;
+  for (let t = 0; t <= max; t += 10000)
+    s += `<line x1="${ml}" x2="${W-mr}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--grid)"/>
+          <text x="${ml-7}" y="${Y(t)+4}" text-anchor="end" fill="var(--text-muted)" font-size="10.5">${axk(t, narrow)}</text>`;
+
+  YEARS.forEach(y => {
+    const i = KEYS.findIndex(k => Math.floor(k/100) === y);
+    const j = KEYS.map(k => Math.floor(k/100)).lastIndexOf(y);
+    if (i > 0) s += `<line x1="${X(i)-step/2}" x2="${X(i)-step/2}" y1="${mt}" y2="${mt+ih}" stroke="var(--border-strong)" stroke-dasharray="2 4"/>`;
+    s += `<text x="${(X(i)+X(j))/2}" y="${H-8}" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="620">${y}</text>`;
+  });
+
+  s += `<line x1="${ml}" x2="${W-mr}" y1="${Y(avg)}" y2="${Y(avg)}" stroke="var(--s3)" stroke-width="2" stroke-dasharray="6 4"/>
+        <text x="${W-mr}" y="${Y(avg)-6}" text-anchor="end" fill="var(--s3)" font-size="11" font-weight="620">média ${brlk(avg)}</text>`;
+
+  const d = KEYS.map((k,i) => `${i?"L":"M"}${X(i).toFixed(1)} ${Y(monthTotal[k]).toFixed(1)}`).join(" ");
+  s += `<path d="${d} L${X(KEYS.length-1)} ${mt+ih} L${ml} ${mt+ih} Z" fill="var(--s1)" opacity=".07"/>
+        <path d="${d}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  if (!narrow) KEYS.forEach((k,i) => s += `<circle cx="${X(i)}" cy="${Y(monthTotal[k])}" r="3" fill="var(--s1)" stroke="var(--surface-1)" stroke-width="2"/>`);
+
+  const pi = vals.indexOf(Math.max(...vals));
+  s += `<text x="${Math.min(X(pi), W-mr-30)}" y="${Y(vals[pi])-10}" text-anchor="middle" fill="var(--text-primary)" font-size="11.5" font-weight="650">${brlk(vals[pi])}</text>`;
+  s += `<line id="xh" x1="0" x2="0" y1="${mt}" y2="${mt+ih}" stroke="var(--s1)" stroke-width="1.5" opacity="0"/>
+        <circle id="xd" r="5" fill="var(--s1)" stroke="var(--surface-1)" stroke-width="2" opacity="0"/>
+        <rect id="xcap" x="${ml-step/2}" y="${mt}" width="${iw+step}" height="${ih}" fill="transparent" style="cursor:crosshair"/>
+        </svg>`;
+  box.innerHTML = s;
+
+  const svg = box.querySelector("svg"), xh = box.querySelector("#xh"),
+        xd = box.querySelector("#xd"), cap = box.querySelector("#xcap"),
+        ro = document.getElementById("roLine");
+
+  function scrub(e){
+    const r = svg.getBoundingClientRect();
+    const px = (e.clientX - r.left) * (W / r.width);
+    let i = Math.round((px - ml) / step);
+    i = Math.max(0, Math.min(KEYS.length - 1, i));
+    const k = KEYS[i];
+    xh.setAttribute("x1", X(i)); xh.setAttribute("x2", X(i)); xh.setAttribute("opacity", 1);
+    xd.setAttribute("cx", X(i)); xd.setAttribute("cy", Y(monthTotal[k])); xd.setAttribute("opacity", 1);
+    const bc = {}; ROWS.filter(x => x[0]*100+x[1] === k).forEach(x => bc[x[2]] = (bc[x[2]]||0) + x[4]);
+    const top = Object.entries(bc).sort((a,b) => b[1]-a[1]).slice(0, isNarrow() ? 3 : 5)
+      .map(([c,v]) => `<span>${c} <b style="font-weight:640;color:var(--text-primary)">${brlk(v)}</b></span>`).join("");
+    ro.innerHTML = `<div class="rt">${MESL[k%100]} / ${Math.floor(k/100)} — ${brl(monthTotal[k])}</div><div class="rv">${top}</div>`;
+  }
+  cap.addEventListener("pointerdown", e => { cap.setPointerCapture(e.pointerId); scrub(e); });
+  cap.addEventListener("pointermove", e => { if (e.pointerType === "mouse" || e.buttons) scrub(e); });
+  cap.addEventListener("pointerleave", () => {
+    if (matchMedia("(hover:hover)").matches){
+      xh.setAttribute("opacity", 0); xd.setAttribute("opacity", 0);
+      ro.innerHTML = `<div class="idle">Passe o cursor sobre o gráfico para ver cada mês.</div>`;
+    }
+  });
+  if (matchMedia("(hover:hover)").matches)
+    ro.innerHTML = `<div class="idle">Passe o cursor sobre o gráfico para ver cada mês.</div>`;
+}
+
+/* ---------------- total por ano ---------------- */
+function yearChart(){
+  const box = document.getElementById("cYear");
+  const W = wOf(box), narrow = isNarrow();
+  const ml = narrow ? 40 : 56, mr = 10, mt = 30, mb = 42;
+  const H = narrow ? 230 : 270, iw = W - ml - mr, ih = H - mt - mb;
+  const tot = {}, cnt = {};
+  YEARS.forEach(y => { tot[y] = 0; cnt[y] = new Set(); });
+  ROWS.forEach(r => { tot[r[0]] += r[4]; cnt[r[0]].add(r[1]); });
+  const max = Math.max(...YEARS.map(y => tot[y])) * 1.18;
+  const slot = iw / YEARS.length, bw = slot * 0.6;
+  const Y = v => mt + ih - v/max*ih;
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Total gasto por ano">`;
+  for (let t = 0; t <= max; t += 40000)
+    s += `<line x1="${ml}" x2="${W-mr}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--grid)"/>
+          <text x="${ml-7}" y="${Y(t)+4}" text-anchor="end" fill="var(--text-muted)" font-size="10.5">${axk(t, narrow)}</text>`;
+  YEARS.forEach((y,i) => {
+    const cx = ml + slot*(i+0.5), n = cnt[y].size, partial = n < 12;
+    s += `<rect x="${cx-bw/2}" y="${Y(tot[y])}" width="${bw}" height="${Math.max(2, mt+ih-Y(tot[y]))}" rx="4"
+            fill="var(--s1)" opacity="${partial ? .5 : 1}"><title>${y}: ${brl(tot[y])} em ${n} meses</title></rect>
+          <text x="${cx}" y="${Y(tot[y])-18}" text-anchor="middle" fill="var(--text-primary)" font-size="11.5" font-weight="650">${brlk(tot[y])}</text>
+          <text x="${cx}" y="${Y(tot[y])-6}" text-anchor="middle" fill="var(--text-muted)" font-size="10">${brlk(tot[y]/n)}/mês</text>
+          <text x="${cx}" y="${mt+ih+16}" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="620">${y}</text>
+          <text x="${cx}" y="${mt+ih+30}" text-anchor="middle" fill="var(--text-muted)" font-size="10">${n} ${n===1?"mês":"meses"}</text>`;
+  });
+  box.innerHTML = s + `</svg>`;
+}
+
+/* ---------------- calendário ---------------- */
+function heatChart(){
+  const box = document.getElementById("cHeat");
+  const W = wOf(box);
+  const ml = 34, mt = 20, cw = (W - ml - 2) / 12, ch = Math.min(30, Math.max(22, cw));
+  const H = mt + YEARS.length*ch + 4;
+  const max = Math.max(...Object.values(monthTotal));
+  const ramp = ["--seq-1","--seq-2","--seq-3","--seq-4","--seq-5","--seq-6"];
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gasto por mês e ano">`;
+  for (let m = 1; m <= 12; m++)
+    s += `<text x="${ml+(m-1)*cw+cw/2}" y="${mt-7}" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">${MES[m][0]}</text>`;
+  YEARS.forEach((y,r) => {
+    s += `<text x="${ml-6}" y="${mt+r*ch+ch/2+4}" text-anchor="end" fill="var(--text-secondary)" font-size="10.5" font-weight="620">${String(y).slice(2)}</text>`;
+    for (let m = 1; m <= 12; m++){
+      const v = monthTotal[y*100+m], x = ml+(m-1)*cw, yy = mt+r*ch;
+      if (v === undefined){
+        s += `<rect x="${x+1}" y="${yy+1}" width="${cw-2}" height="${ch-2}" rx="4" fill="none" stroke="var(--border)" stroke-dasharray="2 3"/>`;
+      } else {
+        const idx = Math.min(ramp.length-1, Math.floor(v/max*ramp.length));
+        s += `<rect class="hc" data-k="${y*100+m}" x="${x+1}" y="${yy+1}" width="${cw-2}" height="${ch-2}" rx="4"
+                fill="var(${ramp[idx]})" style="cursor:pointer"/>
+              <text x="${x+cw/2}" y="${yy+ch/2+3.5}" text-anchor="middle" font-size="9.5" font-weight="640"
+                fill="${idx >= 4 ? "var(--on-deep)" : "var(--text-secondary)"}" pointer-events="none">${Math.round(v/1000)}</text>`;
+      }
+    }
+  });
+  box.innerHTML = s + `</svg>`;
+
+  const ro = document.getElementById("roHeat");
+  const idle = matchMedia("(hover:hover)").matches
+    ? `<div class="idle">Passe o cursor num mês para ver o valor. Números em milhares de reais.</div>`
+    : `<div class="idle">Toque num mês para ver o valor. Números em milhares de reais.</div>`;
+  ro.innerHTML = idle;
+  box.querySelectorAll(".hc").forEach(c => {
+    const show = () => {
+      const k = +c.dataset.k;
+      const bc = {}; ROWS.filter(x => x[0]*100+x[1] === k).forEach(x => bc[x[2]] = (bc[x[2]]||0) + x[4]);
+      const top = Object.entries(bc).sort((a,b) => b[1]-a[1]).slice(0,3)
+        .map(([n,v]) => `<span>${n} <b style="font-weight:640;color:var(--text-primary)">${brlk(v)}</b></span>`).join("");
+      ro.innerHTML = `<div class="rt">${MESL[k%100]} / ${Math.floor(k/100)} — ${brl(monthTotal[k])}</div><div class="rv">${top}</div>`;
+    };
+    c.addEventListener("pointerdown", show);
+    c.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") show(); });
+  });
+}
+
+/* ---------------- categorias ---------------- */
+function catChart(){
+  const box = document.getElementById("cCat");
+  const rs = rowsFiltered(), narrow = isNarrow();
+  const total = rs.reduce((s,r) => s + r[4], 0);
+  const by = {}; rs.forEach(r => by[r[2]] = (by[r[2]]||0) + r[4]);
+  const list = Object.entries(by).sort((a,b) => b[1]-a[1]);
+  const nM = new Set(rs.map(r => r[0]*100 + r[1])).size;
+
+  document.getElementById("catTitle").textContent = "Gasto por categoria — " + labelFiltro();
+  document.getElementById("catHint").textContent =
+    `Ordenado por valor; a cor escurece junto com a barra. Base: ${nM} meses, ${brl(total)}.`;
+
+  const W = wOf(box), max = list[0][1];
+  const ramp = ["--seq-2","--seq-3","--seq-4","--seq-5","--seq-6"];
+  let s, H;
+
+  if (narrow){
+    // rótulo acima da barra: a barra fica com a largura toda
+    const rowh = 46; H = list.length*rowh;
+    s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gasto por categoria">`;
+    list.forEach(([c,v],i) => {
+      const y = i*rowh, bw = Math.max(3, v/max*W), idx = Math.min(4, Math.floor(v/max*5));
+      s += `<text x="0" y="${y+13}" fill="var(--text-primary)" font-size="13" font-weight="560">${c}</text>
+            <text x="${W}" y="${y+13}" text-anchor="end" fill="var(--text-primary)" font-size="12.5" font-weight="640">${brl(v)}</text>
+            <rect x="0" y="${y+20}" width="${bw}" height="10" rx="4" fill="var(${ramp[idx]})"/>
+            <text x="0" y="${y+42}" fill="var(--text-muted)" font-size="11.5">${(v/total*100).toFixed(1)}% · ${brl(v/nM)}/mês</text>`;
+    });
+  } else {
+    const rowh = 34, ml = 132, mr = 132, iw = W - ml - mr; H = list.length*rowh + 8;
+    s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gasto por categoria">`;
+    list.forEach(([c,v],i) => {
+      const y = i*rowh+4, bw = Math.max(3, v/max*iw), idx = Math.min(4, Math.floor(v/max*5));
+      const inside = bw + 96 > iw;
+      s += `<text x="${ml-12}" y="${y+rowh/2+4}" text-anchor="end" fill="var(--text-primary)" font-size="13" font-weight="550">${c}</text>
+            <rect x="${ml}" y="${y+5}" width="${bw}" height="${rowh-14}" rx="4" fill="var(${ramp[idx]})"/>
+            ${inside
+              ? `<text x="${ml+bw-10}" y="${y+rowh/2+4}" text-anchor="end" fill="var(--on-deep)" font-size="12.5" font-weight="640">${brl(v)}</text>`
+              : `<text x="${ml+bw+10}" y="${y+rowh/2+4}" fill="var(--text-primary)" font-size="12.5" font-weight="640">${brl(v)}</text>`}
+            <text x="${W}" y="${y+rowh/2+4}" text-anchor="end" fill="var(--text-muted)" font-size="12">${(v/total*100).toFixed(1)}% · ${brl(v/nM)}/mês</text>`;
+    });
+  }
+  box.innerHTML = s + `</svg>`;
+}
+
+/* ---------------- mini-séries ---------------- */
+function smallMultiples(){
+  const rs = rowsFiltered();
+  const keys = KEYS.filter(k => filterYear === "all" || Math.floor(k/100) === +filterYear);
+  const by = {}; CATS.forEach(c => by[c] = Object.fromEntries(keys.map(k => [k, 0])));
+  rs.forEach(r => by[r[2]][r[0]*100 + r[1]] += r[4]);
+  const tot = Object.fromEntries(CATS.map(c => [c, keys.reduce((s,k) => s + by[c][k], 0)]));
+  const order = CATS.filter(c => tot[c] > 0).sort((a,b) => tot[b] - tot[a]);
+  const gmax = Math.max(...order.flatMap(c => keys.map(k => by[c][k])));
+  const W = 280, H = 44;
+
+  document.getElementById("cSm").innerHTML = order.map(c => {
+    const X = i => keys.length === 1 ? W/2 : i*W/(keys.length-1);
+    const Y = v => H-3 - (gmax ? v/gmax*(H-9) : 0);
+    const d = keys.map((k,i) => `${i?"L":"M"}${X(i).toFixed(1)} ${Y(by[c][k]).toFixed(1)}`).join(" ");
+    return `<div class="cell">
+      <div class="cn"><span>${c}</span><span class="cv">${brl(tot[c])}</span></div>
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:44px" role="img" aria-label="${c}: ${brl(tot[c])} no período">
+        <path d="${d} L${X(keys.length-1)} ${H-3} L${X(0)} ${H-3} Z" fill="var(--s1)" opacity=".08"/>
+        <path d="${d}" fill="none" stroke="var(--s1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+      </svg></div>`;
+  }).join("");
+}
+
+/* ---------------- maiores itens ---------------- */
+function itemsTable(){
+  const rs = rowsFiltered();
+  const total = rs.reduce((s,r) => s + r[4], 0);
+  const agg = {};
+  rs.forEach(r => {
+    const k = r[2] + "|" + r[3];
+    if (!agg[k]) agg[k] = { cat:r[2], item:r[3], v:0, m:new Set() };
+    agg[k].v += r[4]; agg[k].m.add(r[0]*100 + r[1]);
+  });
+  const list = Object.values(agg).sort((a,b) => b.v - a.v).slice(0, 20);
+  const max = list[0].v;
+  document.getElementById("itTitle").textContent = "Maiores itens — " + labelFiltro();
+  document.getElementById("itHint").textContent =
+    `Top 20 de ${Object.keys(agg).length} itens. "Meses" = em quantos meses o item apareceu.`;
+  document.getElementById("tItems").innerHTML = list.map(o => `<div class="trow">
+      <div class="tname">${o.item}</div>
+      <div class="tval">${brl(o.v)}</div>
+      <div class="tmeta">${o.cat} · ${o.m.size} ${o.m.size===1?"mês":"meses"}</div>
+      <div class="tpct">${(o.v/total*100).toFixed(1)}%</div>
+      <div class="tbar" style="width:${(o.v/max*100).toFixed(1)}%"></div>
+    </div>`).join("");
+}
+
+/* ---------------- render ---------------- */
+function renderDynamic(){ kpis(); catChart(); smallMultiples(); itemsTable(); }
+function renderCharts(){ lineChart(); yearChart(); heatChart(); catChart(); }
+
+const first = KEYS[0], last = KEYS.at(-1);
+document.getElementById("sub").textContent =
+  `${KEYS.length} meses · ${MESL[first%100]}/${Math.floor(first/100)} a ${MESL[last%100]}/${Math.floor(last/100)} · ${ROWS.length} lançamentos`;
+document.getElementById("lineHint").textContent =
+  `Os ${KEYS.length} meses registrados. A linha tracejada é a média do período.`;
+document.getElementById("foot").innerHTML =
+  `Fonte: <code>Financeiro 2022</code> a <code>2026.xlsx</code> — uma aba por mês, categorias em blocos.
+   Os ${KEYS.length} meses batem exatamente com a linha <b>Total:</b> de cada planilha. Valores nominais, sem correção pela inflação.<br>
+   Linha, ano e calendário mostram sempre o período inteiro; o filtro de ano age nos indicadores, categorias, mini-séries e itens.`;
+
+renderDynamic(); renderCharts();
+
+let t;
+addEventListener("resize", () => { clearTimeout(t); t = setTimeout(renderCharts, 150); });
+</script>
+
+</body>
+</html>

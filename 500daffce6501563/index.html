@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Saúde Caio">
+<title>Saúde Caio</title>
+<style>
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --ink:#0f172a; --ink2:#475569; --ink3:#94a3b8;
+  --line:#e2e8f0; --shadow:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
+  --ok:#16a34a; --okbg:#dcfce7; --warn:#d97706; --warnbg:#fef3c7;
+  --bad:#dc2626; --badbg:#fee2e2; --info:#2563eb; --infobg:#dbeafe;
+  --accent:#0ea5e9;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b1220; --card:#121a2b; --ink:#e8eefc; --ink2:#9fb0cc; --ink3:#64748b;
+    --line:#22304a; --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    --okbg:#0d3320; --warnbg:#3b2a07; --badbg:#3d1414; --infobg:#0e2647;
+    --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  padding:0 0 48px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+
+header{padding:28px 0 18px}
+h1{margin:0;font-size:30px;letter-spacing:-.02em;font-weight:800}
+.sub{color:var(--ink2);font-size:14px;margin-top:6px}
+.who{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:5px 11px;font-size:12px;color:var(--ink2);box-shadow:var(--shadow)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
+  margin:26px 0 10px;font-weight:700}
+h3{font-size:15px;margin:0 0 12px;font-weight:700}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px 12px;text-align:center;box-shadow:var(--shadow)}
+.kpi .n{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.kpi .l{font-size:11px;color:var(--ink2);margin-top:4px;line-height:1.25}
+.kpi.g .n{color:var(--ok)} .kpi.y .n{color:var(--warn)} .kpi.r .n{color:var(--bad)}
+
+/* alertas */
+.alert{border-radius:14px;padding:14px 16px;margin:10px 0;border:1px solid transparent}
+.alert .t{font-weight:700;font-size:15px;margin-bottom:4px}
+.alert p{margin:0;font-size:14px;line-height:1.55}
+.alert.w{background:var(--warnbg);border-color:color-mix(in srgb,var(--warn) 35%,transparent);color:var(--ink)}
+.alert.i{background:var(--infobg);border-color:color-mix(in srgb,var(--info) 30%,transparent);color:var(--ink)}
+.alert.o{background:var(--okbg);border-color:color-mix(in srgb,var(--ok) 30%,transparent);color:var(--ink)}
+
+/* linhas de exame */
+.row{padding:13px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.row:first-child{padding-top:0}
+.rt{display:flex;align-items:baseline;gap:8px}
+.name{font-size:14px;font-weight:600;flex:1;min-width:0}
+.val{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.unit{font-size:11px;color:var(--ink3);font-weight:600}
+.ref{font-size:11px;color:var(--ink3);margin-top:3px;font-variant-numeric:tabular-nums}
+.tag{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.03em}
+.tag.ok{background:var(--okbg);color:var(--ok)}
+.tag.hi{background:var(--badbg);color:var(--bad)}
+.tag.lo{background:var(--infobg);color:var(--info)}
+.tag.at{background:var(--warnbg);color:var(--warn)}
+
+/* barra de faixa */
+.bar{position:relative;height:6px;border-radius:99px;margin-top:9px;
+  background:linear-gradient(90deg,var(--infobg) 0 12%,var(--okbg) 12% 88%,var(--badbg) 88% 100%)}
+.bar i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;
+  background:var(--ink);border:2px solid var(--card);transform:translateX(-50%)}
+.bar i.hi{background:var(--bad)} .bar i.lo{background:var(--info)} .bar i.ok{background:var(--ok)}
+
+/* histórico inline */
+.hist{margin-top:8px;font-size:11px;color:var(--ink3);display:flex;gap:10px;flex-wrap:wrap}
+.hist b{color:var(--ink2);font-weight:700}
+
+/* gráfico */
+.chart{width:100%;height:190px;display:block;overflow:visible}
+
+/* lista de insights */
+ol.ins{margin:0;padding-left:20px}
+ol.ins li{margin:0 0 14px;font-size:14px;line-height:1.6}
+ol.ins li:last-child{margin-bottom:0}
+ol.ins b{font-weight:700}
+ul.next{margin:0;padding-left:20px}
+ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
+
+.foot{font-size:11px;color:var(--ink3);line-height:1.6;text-align:center;margin-top:26px}
+.disc{background:var(--card);border:1px dashed var(--line);border-radius:12px;
+  padding:12px 14px;font-size:12px;color:var(--ink2);line-height:1.55;margin-top:14px}
+@media(max-width:400px){ .kpis{grid-template-columns:repeat(3,1fr)} .kpi .n{font-size:22px} h1{font-size:26px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Saúde Caio</h1>
+  <div class="sub">Painel de exames · última coleta <b>11/05/2026</b></div>
+  <div class="who">
+    <span class="chip">Caio Patriota Oyola</span>
+    <span class="chip">29 anos · 02/04/1997</span>
+    <span class="chip">LANAC · CendiCardio</span>
+    <span class="chip">Unimed Curitiba</span>
+  </div>
+</header>
+
+<div id="kpis" class="kpis"></div>
+
+<h2>Pontos de atenção</h2>
+<div class="alert w">
+  <div class="t">⚠️ Glicose em jejum 102,2 mg/dL — acima da faixa (60–99)</div>
+  <p>É o único achado que muda conduta. Subiu de <b>79,0</b> (set/2023) e <b>85,0</b> (ago/2023) para <b>102,2</b> — alta de <b>+29%</b> em ~2,7 anos, e a faixa 100–125 é o território de pré-diabetes pelos critérios da ADA. O próprio laudo sugere teste de tolerância à glicose (GTT) ou monitoramento mais criterioso.</p>
+</div>
+<div class="alert i">
+  <div class="t">ℹ️ Dois desvios sem peso clínico isolado</div>
+  <p><b>CHCM 35,0</b> (ref. 31,5–34,5) e <b>linfócitos 3.079/mm³</b> (ref. até 3.000) estão a um fio da borda, com todo o resto do hemograma limpo — padrão típico de variação laboratorial, não de doença. <b>Creatinina 0,81</b> abaixo do piso (0,84) é irrelevante com filtração &gt;90.</p>
+</div>
+<div class="alert o">
+  <div class="t">✅ Coração, rins e coagulação sem alteração</div>
+  <p>ECG dentro dos limites da normalidade, ritmo sinusal. Função renal preservada (TFG &gt;90, categoria G1). Coagulograma e plaquetas normais.</p>
+</div>
+
+<h2>Evolução — glicose em jejum</h2>
+<div class="card">
+  <svg id="chart" class="chart" viewBox="0 0 600 190" preserveAspectRatio="none" aria-label="Evolução da glicose"></svg>
+  <div class="hist" style="margin-top:10px">
+    <span><b>08/08/2023</b> 85,0</span><span><b>13/09/2023</b> 79,0</span><span><b>11/05/2026</b> 102,2</span>
+    <span style="color:var(--warn)"><b>Δ</b> +23,2 mg/dL vs. 2023</span>
+  </div>
+</div>
+
+<div id="panels"></div>
+
+<h2>Cardiovascular · 11/05/2026</h2>
+<div class="card">
+  <h3>Eletrocardiograma de repouso</h3>
+  <div class="row">
+    <div class="rt"><span class="name">Ritmo</span><span class="val">Sinusal</span><span class="tag ok">NORMAL</span></div>
+  </div>
+  <div class="row">
+    <div class="rt"><span class="name">Frequência cardíaca</span><span class="val">58 <span class="unit">bpm</span></span><span class="tag ok">NORMAL</span></div>
+    <div class="ref">Bradicardia sinusal leve — esperada e benigna em pessoa jovem e ativa, com ECG normal</div>
+  </div>
+  <div class="row">
+    <div class="rt"><span class="name">Conclusão do laudo</span><span class="val" style="font-size:14px">Dentro dos limites da normalidade</span></div>
+    <div class="ref">Dr. Daniel Précoma Neto · CRM 19223 · CendiCardio · exame 28537</div>
+  </div>
+</div>
+
+<h2>O que os dados dizem</h2>
+<div class="card">
+  <ol class="ins">
+    <li><b>A glicose é a única história real deste exame.</b> Em 2023 você tinha duas medidas confortavelmente normais (85 e 79). Em 2026 aparece 102,2 — não é diagnóstico de nada, mas é a primeira vez que um número seu cruza a linha, e a direção da trajetória importa mais que o valor absoluto.</li>
+    <li><b>Uma medida isolada de glicose não fecha caso.</b> Jejum irregular, noite mal dormida ou estresse agudo mexem nesse valor. O que resolve a dúvida é <b>hemoglobina glicada (HbA1c)</b>, que enxerga ~3 meses de média em vez de uma manhã — e não foi pedida nesta coleta.</li>
+    <li><b>Tudo que fala de inflamação ou infecção está silencioso.</b> Leucócitos 7.510 no meio da faixa, neutrófilos 47%, eosinófilos e basófilos normais, plaquetas 230 mil. Não há sinal de processo agudo.</li>
+    <li><b>Série vermelha excelente.</b> Hemoglobina 15,4 e hematócrito 44% — sem qualquer sombra de anemia. VCM 83,8 fica no piso da faixa, o que só valeria investigação (ferritina) se houvesse anemia junto; não é o caso.</li>
+    <li><b>Rim intacto.</b> Creatinina 0,81 praticamente idêntica a 2023 (0,79 e 0,81) e ureia 35,1 estável vs. 33,0 — três anos sem deriva nenhuma. TFG &gt;90 = categoria G1.</li>
+    <li><b>Faltam peças importantes no painel.</b> Não há <b>perfil lipídico</b> (colesterol, HDL, LDL, triglicerídeos), <b>HbA1c</b>, <b>TSH</b>, <b>vitamina D</b> nem <b>ácido úrico</b>. Com uma glicose limítrofe em cima da mesa, o lipídico é a lacuna que mais incomoda — glicose e triglicerídeos costumam se mexer juntos.</li>
+    <li><b>Fígado só tem dado de 2023</b> (TGO 15 / TGP 22, ambos normais). Não foi remedido agora.</li>
+  </ol>
+</div>
+
+<h2>Sugestão de próximos passos</h2>
+<div class="card">
+  <ul class="next">
+    <li><b>HbA1c</b> — confirma ou descarta o achado da glicose com uma medida estável.</li>
+    <li><b>Perfil lipídico completo</b> — a lacuna mais óbvia do painel atual.</li>
+    <li><b>Repetir glicose em jejum</b> com jejum bem controlado de 8–12h.</li>
+    <li><b>TSH, vitamina D, B12 e ácido úrico</b> — checkup padrão para a faixa dos 29.</li>
+    <li>Levar este painel ao <b>Dr. Marcio Schiavon</b> (solicitante) para decidir o que repetir e em quanto tempo.</li>
+  </ul>
+</div>
+
+<div class="disc">
+  <b>Aviso.</b> Este painel apenas organiza e visualiza os números dos seus laudos — não é diagnóstico nem substitui avaliação médica. Interpretação de exame depende de história clínica, exame físico e contexto que um arquivo HTML não tem. Toda decisão é do seu médico.
+</div>
+
+<div class="foot">
+  Fontes: LANAC Laboratório de Análises Clínicas — protocolo 025-67701-2008, coleta 11/05/2026 10:13, emissão 18/05/2026 (7 páginas).<br>
+  CendiCardio — ECG de repouso 28537, 11/05/2026.<br>
+  Comparativos: O.S. 025-66730-2108 (13/09/2023) e 025-66694-2419 (08/08/2023).
+</div>
+
+</div>
+
+<script>
+/* ---------- dados ---------- */
+/* status: calculado a partir de lo/hi quando existirem; senão usa 'force' */
+const PANELS = [
+{
+  titulo:"Hemograma · 11/05/2026", sub:"Sangue total com EDTA · método automatizado",
+  grupos:[
+   {nome:"Eritrograma", itens:[
+     {n:"Hematócrito",       v:44.00, u:"%",         lo:40,   hi:50},
+     {n:"Hemoglobina",       v:15.40, u:"g/dL",      lo:13,   hi:17},
+     {n:"Hemácias",          v:5.25,  u:"milhões/µL",lo:4.5,  hi:5.5},
+     {n:"V.C.M.",            v:83.80, u:"fL",        lo:83,   hi:101},
+     {n:"H.C.M.",            v:29.30, u:"pg",        lo:27,   hi:32},
+     {n:"C.H.C.M.",          v:35.00, u:"%",         lo:31.5, hi:34.5},
+     {n:"RDW",               v:11.90, u:"%",         lo:11.6, hi:14.0}
+   ]},
+   {nome:"Leucograma", itens:[
+     {n:"Leucócitos",        v:7510,  u:"/mm³",      lo:4000, hi:10000},
+     {n:"Neutrófilos",       v:3530,  u:"/mm³",      lo:2000, hi:7000, obs:"47%"},
+     {n:"Linfócitos típicos",v:3079,  u:"/mm³",      lo:1000, hi:3000, obs:"41%"},
+     {n:"Monócitos",         v:601,   u:"/mm³",      lo:200,  hi:1000, obs:"8%"},
+     {n:"Eosinófilos",       v:225,   u:"/mm³",      lo:20,   hi:500,  obs:"3%"},
+     {n:"Basófilos",         v:75,    u:"/mm³",      lo:20,   hi:100,  obs:"1%"}
+   ]},
+   {nome:"Plaquetas", itens:[
+     {n:"Plaquetas",         v:230000,u:"/mm³",      lo:150000,hi:400000},
+     {n:"V.P.M.",            v:9.9,   u:"fL",        lo:7.5,  hi:11.2}
+   ]}
+  ]
+},
+{
+  titulo:"Bioquímica e função renal · 11/05/2026", sub:"Soro",
+  grupos:[
+   {nome:null, itens:[
+     {n:"Glicose em jejum",  v:102.2, u:"mg/dL",     lo:60,   hi:99,
+      hist:[["08/08/2023",85.0],["13/09/2023",79.0]],
+      obs:"laudo sugere GTT para valores 100–125"},
+     {n:"Ureia",             v:35.10, u:"mg/dL",     lo:17,   hi:43,
+      hist:[["08/08/2023",33.0]]},
+     {n:"Creatinina",        v:0.81,  u:"mg/dL",     lo:0.84, hi:1.25,
+      hist:[["08/08/2023",0.81],["13/09/2023",0.79]],
+      force:"ok", tagtxt:"NORMAL", obs:"abaixo do piso, mas sem significado com TFG >90"},
+     {n:"Taxa de filtração glomerular (eGFR)", txt:"> 90,0", u:"mL/min/1,73m²",
+      force:"ok", tagtxt:"G1 NORMAL", obs:"CKD-EPI 2021 · categoria G1 (normal)"}
+   ]}
+  ]
+},
+{
+  titulo:"Coagulograma · 11/05/2026", sub:"Sangue total com EDTA e plasma citratado · coagulométrico",
+  grupos:[
+   {nome:null, itens:[
+     {n:"TAP — tempo de protrombina", v:11.70, u:"segundos", force:"ok", tagtxt:"NORMAL",
+      obs:"atividade de protrombina 97,0% (ref. ≥70%)"},
+     {n:"R.N.I.",            v:1.02,  u:"",          lo:0.8,  hi:1.2,
+      hist:[["08/08/2023",0.97],["13/09/2023",0.98]]},
+     {n:"Tempo parcial de tromboplastina", v:33.10, u:"segundos", lo:24.9, hi:37.0,
+      hist:[["08/08/2023",27.70],["13/09/2023",32.10]]}
+   ]}
+  ]
+},
+{
+  titulo:"Histórico — exames de 2023 não repetidos agora", sub:"O.S. 025-66694-2419 · 08/08/2023",
+  grupos:[
+   {nome:null, itens:[
+     {n:"TGO / AST",         v:15, u:"U/L", force:"ok", tagtxt:"NORMAL 2023"},
+     {n:"TGP / ALT",         v:22, u:"U/L", force:"ok", tagtxt:"NORMAL 2023"}
+   ]}
+  ]
+}
+];
+
+/* ---------- render ---------- */
+const fmt = n => {
+  if(n===undefined||n===null) return "";
+  if(Math.abs(n)>=1000) return n.toLocaleString("pt-BR");
+  return String(n).replace(".",",");
+};
+function statusOf(it){
+  if(it.force) return it.force;
+  if(it.lo===undefined||it.v===undefined) return "ok";
+  if(it.v > it.hi) return "hi";
+  if(it.v < it.lo) return "lo";
+  return "ok";
+}
+const TAGS = {ok:["ok","NORMAL"], hi:["hi","ACIMA"], lo:["lo","ABAIXO"], at:["at","ATENÇÃO"]};
+
+let counts = {ok:0, off:0, total:0};
+
+function renderItem(it){
+  const st = statusOf(it);
+  const [cls,label] = TAGS[st] || TAGS.ok;
+  const tagTxt = it.tagtxt || label;
+  counts.total++; (st==="ok" ? counts.ok++ : counts.off++);
+
+  let html = '<div class="row"><div class="rt">';
+  html += '<span class="name">'+it.n+(it.obs&&it.obs.endsWith("%")?' <span class="unit">'+it.obs+'</span>':'')+'</span>';
+  html += '<span class="val">'+(it.txt||fmt(it.v))+(it.u?' <span class="unit">'+it.u+'</span>':'')+'</span>';
+  html += '<span class="tag '+cls+'">'+tagTxt+'</span></div>';
+
+  if(it.lo!==undefined) html += '<div class="ref">Referência '+fmt(it.lo)+' – '+fmt(it.hi)+(it.u?' '+it.u:'')+'</div>';
+  if(it.obs && !it.obs.endsWith("%")) html += '<div class="ref">'+it.obs+'</div>';
+
+  if(it.lo!==undefined && it.v!==undefined){
+    const span = it.hi - it.lo, pad = span*0.18;              // 12% de cada lado é fora da faixa
+    const min = it.lo - pad, max = it.hi + pad;
+    let p = ((it.v - min)/(max - min))*100;
+    p = Math.max(2, Math.min(98, p));
+    html += '<div class="bar"><i class="'+st+'" style="left:'+p.toFixed(1)+'%"></i></div>';
+  }
+  if(it.hist && it.hist.length){
+    html += '<div class="hist">'+it.hist.map(h=>'<span><b>'+h[0]+'</b> '+fmt(h[1])+'</span>').join('')+'</div>';
+  }
+  return html + '</div>';
+}
+
+document.getElementById("panels").innerHTML = PANELS.map(p=>{
+  let h = '<h2>'+p.titulo+'</h2><div class="card">';
+  if(p.sub) h += '<div class="ref" style="margin:-4px 0 14px">'+p.sub+'</div>';
+  p.grupos.forEach((g,gi)=>{
+    if(g.nome) h += '<h3'+(gi?' style="margin-top:18px"':'')+'>'+g.nome+'</h3>';
+    h += g.itens.map(renderItem).join('');
+  });
+  return h + '</div>';
+}).join('');
+
+document.getElementById("kpis").innerHTML =
+  '<div class="kpi"><div class="n">'+counts.total+'</div><div class="l">parâmetros medidos</div></div>' +
+  '<div class="kpi g"><div class="n">'+counts.ok+'</div><div class="l">dentro da faixa</div></div>' +
+  '<div class="kpi y"><div class="n">'+counts.off+'</div><div class="l">fora da faixa</div></div>';
+
+/* gráfico da glicose */
+(function(){
+  const pts = [["ago/23",85.0],["set/23",79.0],["mai/26",102.2]];
+  const W=600,H=190,L=44,R=16,T=18,B=32;
+  const yMin=60, yMax=115;
+  const x = i => L + i*((W-L-R)/(pts.length-1));
+  const y = v => T + (1-(v-yMin)/(yMax-yMin))*(H-T-B);
+  let s='';
+  // faixa normal 60–99
+  s += '<rect x="'+L+'" y="'+y(99)+'" width="'+(W-L-R)+'" height="'+(y(60)-y(99))+'" fill="var(--okbg)" opacity=".65"/>';
+  s += '<line x1="'+L+'" y1="'+y(99)+'" x2="'+(W-R)+'" y2="'+y(99)+'" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+  s += '<text x="'+(L+6)+'" y="'+(y(99)-7)+'" font-size="11" fill="var(--warn)" font-weight="700">limite normal 99</text>';
+  [60,80,100].forEach(v=>{
+    s += '<text x="'+(L-8)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="11" fill="var(--ink3)">'+v+'</text>';
+  });
+  const d = pts.map((p,i)=>(i?'L':'M')+x(i)+','+y(p[1])).join(' ');
+  s += '<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  pts.forEach((p,i)=>{
+    const above = p[1] > 99;
+    s += '<circle cx="'+x(i)+'" cy="'+y(p[1])+'" r="6" fill="'+(above?'var(--bad)':'var(--ok)')+'" stroke="var(--card)" stroke-width="2.5"/>';
+    s += '<text x="'+x(i)+'" y="'+(y(p[1])-14)+'" text-anchor="middle" font-size="13" font-weight="800" fill="'+(above?'var(--bad)':'var(--ink)')+'">'+String(p[1]).replace(".",",")+'</text>';
+    s += '<text x="'+x(i)+'" y="'+(H-10)+'" text-anchor="middle" font-size="11" fill="var(--ink3)">'+p[0]+'</text>';
+  });
+  document.getElementById("chart").innerHTML = s;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Medidas">
+<link rel="apple-touch-icon" sizes="180x180" href="saude-icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="saude-icon-192.png">
+<title>Medidas Caio</title>
+<style>
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --ink:#0f172a; --ink2:#475569; --ink3:#94a3b8;
+  --line:#e2e8f0; --shadow:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
+  --ok:#16a34a; --okbg:#dcfce7; --warn:#d97706; --warnbg:#fef3c7;
+  --bad:#dc2626; --badbg:#fee2e2; --info:#2563eb; --infobg:#dbeafe;
+  --accent:#0ea5e9; --skin:#e7c9ae; --skin2:#d8b193; --fold:#f97316;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b1220; --card:#121a2b; --ink:#e8eefc; --ink2:#9fb0cc; --ink3:#64748b;
+    --line:#22304a; --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    --okbg:#0d3320; --warnbg:#3b2a07; --badbg:#3d1414; --infobg:#0e2647;
+    --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+    --skin:#33455f; --skin2:#3f5473;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  padding:env(safe-area-inset-top) 0 calc(48px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+.wrap{max-width:860px;margin:0 auto;
+  padding-left:calc(16px + env(safe-area-inset-left));
+  padding-right:calc(16px + env(safe-area-inset-right))}
+
+header{padding:24px 0 14px}
+h1{margin:0;font-size:30px;letter-spacing:-.02em;font-weight:800}
+.sub{color:var(--ink2);font-size:14px;margin-top:6px}
+.who{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:5px 11px;font-size:12px;color:var(--ink2);box-shadow:var(--shadow)}
+.back{display:inline-block;margin-top:2px;font-size:13px;color:var(--accent);
+  text-decoration:none;font-weight:700}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
+  margin:26px 0 10px;font-weight:700}
+h3{font-size:15px;margin:0 0 12px;font-weight:700}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px 8px;text-align:center;box-shadow:var(--shadow)}
+.kpi .n{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.15;white-space:nowrap}
+.kpi .l{font-size:10.5px;color:var(--ink2);margin-top:4px;line-height:1.25}
+.kpi.y .n{color:var(--warn)} .kpi.g .n{color:var(--ok)} .kpi.b .n{color:var(--info)}
+
+/* abas do boneco */
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;border:1px solid var(--line);background:var(--bg);color:var(--ink2);
+  border-radius:11px;padding:9px 6px;font-size:13px;font-weight:700;cursor:pointer;
+  font-family:inherit}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.fig{width:100%;height:auto;display:block;overflow:visible}
+.legend{font-size:11.5px;color:var(--ink3);text-align:center;margin-top:8px;line-height:1.5}
+
+/* gauge de BF */
+.gauge{position:relative;height:26px;border-radius:8px;overflow:hidden;display:flex;
+  margin-top:8px;border:1px solid var(--line)}
+.gauge div{height:100%}
+.gmark{position:absolute;top:-5px;width:3px;height:36px;background:var(--ink);
+  border-radius:2px;transform:translateX(-50%);box-shadow:0 0 0 2px var(--card)}
+.glab{display:flex;font-size:8.5px;color:var(--ink3);margin-top:5px;text-align:center;line-height:1.35}
+.glab span{display:block;white-space:nowrap}
+.glab b{display:block;font-weight:600}
+
+/* linhas de medida */
+.row{padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.row:first-child{padding-top:0}
+.rt{display:flex;align-items:baseline;gap:8px}
+.name{font-size:14px;font-weight:600;flex:1;min-width:0}
+.val{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.unit{font-size:11px;color:var(--ink3);font-weight:600}
+.ref{font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.45}
+.tag{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.03em}
+.tag.ok{background:var(--okbg);color:var(--ok)}
+.tag.at{background:var(--warnbg);color:var(--warn)}
+.tag.hi{background:var(--badbg);color:var(--bad)}
+.tag.n{background:var(--infobg);color:var(--info)}
+.mbar{height:6px;border-radius:99px;background:var(--line);margin-top:9px;overflow:hidden}
+.mbar i{display:block;height:100%;border-radius:99px;background:var(--fold)}
+
+/* tabela protocolos */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);
+  text-align:left;padding:0 0 8px;font-weight:700}
+td{padding:9px 0;border-top:1px solid var(--line);vertical-align:top}
+td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap}
+td small{display:block;color:var(--ink3);font-size:11px;font-weight:400;margin-top:2px}
+
+.alert{border-radius:14px;padding:14px 16px;margin:10px 0;border:1px solid transparent}
+.alert .t{font-weight:700;font-size:15px;margin-bottom:4px}
+.alert p{margin:0;font-size:14px;line-height:1.55}
+.alert.w{background:var(--warnbg);border-color:color-mix(in srgb,var(--warn) 35%,transparent);color:var(--ink)}
+.alert.i{background:var(--infobg);border-color:color-mix(in srgb,var(--info) 30%,transparent);color:var(--ink)}
+.alert.o{background:var(--okbg);border-color:color-mix(in srgb,var(--ok) 30%,transparent);color:var(--ink)}
+
+ol.ins{margin:0;padding-left:20px}
+ol.ins li{margin:0 0 14px;font-size:14px;line-height:1.6}
+ol.ins li:last-child{margin-bottom:0}
+.disc{background:var(--card);border:1px dashed var(--line);border-radius:12px;
+  padding:12px 14px;font-size:12px;color:var(--ink2);line-height:1.55;margin-top:14px}
+.foot{font-size:11px;color:var(--ink3);line-height:1.6;text-align:center;margin-top:26px}
+@media(max-width:420px){ h1{font-size:26px} .kpi .n{font-size:20px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <a class="back" href="index.html">← Painel de exames</a>
+  <h1>Medidas &amp; Composição</h1>
+  <div class="sub">Antropometria · aferição de <b>23/07/2026</b></div>
+  <div class="who">
+    <span class="chip">1,69 m · 64 kg</span>
+    <span class="chip">29 anos</span>
+    <span class="chip">9 dobras cutâneas</span>
+    <span class="chip">12 circunferências</span>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi y"><div class="n">20,9<span style="font-size:15px">%</span></div><div class="l">gordura corporal</div></div>
+  <div class="kpi"><div class="n">13,4<span style="font-size:14px"> kg</span></div><div class="l">massa gorda</div></div>
+  <div class="kpi g"><div class="n">50,6<span style="font-size:14px"> kg</span></div><div class="l">massa magra</div></div>
+  <div class="kpi b"><div class="n">22,4</div><div class="l">IMC</div></div>
+</div>
+
+<h2>O corpo em números</h2>
+<div class="card">
+  <div class="tabs">
+    <button class="tab on" id="t1" onclick="setTab(1)">📏 Circunferências</button>
+    <button class="tab" id="t2" onclick="setTab(2)">🤏 Dobras cutâneas</button>
+  </div>
+
+  <!-- ================= BONECO ================= -->
+  <svg id="fig" class="fig" viewBox="0 0 400 600" role="img" aria-label="Boneco com as medidas do corpo">
+    <defs>
+      <linearGradient id="sk" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="var(--skin2)"/>
+        <stop offset=".45" stop-color="var(--skin)"/>
+        <stop offset="1" stop-color="var(--skin2)"/>
+      </linearGradient>
+    </defs>
+    <g fill="url(#sk)" stroke="var(--ink3)" stroke-width="1.1" stroke-linejoin="round">
+      <!-- cabeça e pescoço -->
+      <rect x="189" y="72" width="22" height="24" rx="8"/>
+      <ellipse cx="200" cy="50" rx="24" ry="29"/>
+      <!-- tronco -->
+      <path d="M152,112 C156,98 174,90 200,90 C226,90 244,98 248,112
+               C252,142 244,176 236,206 C232,222 231,236 233,252
+               C235,268 238,278 238,290 L162,290
+               C162,278 165,268 167,252 C169,236 168,222 164,206
+               C156,176 148,142 152,112 Z"/>
+      <!-- braço esquerdo (à esquerda na tela = direito de quem olha) -->
+      <path d="M151,114 C138,124 132,142 130,168 C128,190 130,206 134,219
+               L153,215 C150,199 150,180 152,160 C154,140 157,124 159,116 Z"/>
+      <path d="M134,223 C130,241 128,259 128,277 C128,289 130,297 133,302
+               L149,300 C149,288 150,271 151,255 C152,241 153,229 153,219 Z"/>
+      <ellipse cx="133" cy="315" rx="10" ry="14"/>
+      <!-- braço direito -->
+      <path d="M249,114 C262,124 268,142 270,168 C272,190 270,206 266,219
+               L247,215 C250,199 250,180 248,160 C246,140 243,124 241,116 Z"/>
+      <path d="M266,223 C270,241 272,259 272,277 C272,289 270,297 267,302
+               L251,300 C251,288 250,271 249,255 C248,241 247,229 247,219 Z"/>
+      <ellipse cx="267" cy="315" rx="10" ry="14"/>
+      <!-- perna esquerda -->
+      <path d="M167,294 C161,322 159,352 161,384 C162,400 164,410 166,418
+               L191,416 C191,398 193,371 195,347 C196,321 197,306 197,294 Z"/>
+      <path d="M166,424 C162,446 161,466 163,486 C164,498 166,506 168,512
+               L187,510 C187,496 189,474 190,456 C191,440 191,430 191,422 Z"/>
+      <path d="M168,516 C167,524 166,530 166,534 C166,538 169,540 176,540
+               L191,540 C193,540 194,538 193,534 C192,528 189,522 187,514 Z"/>
+      <!-- perna direita -->
+      <path d="M233,294 C239,322 241,352 239,384 C238,400 236,410 234,418
+               L209,416 C209,398 207,371 205,347 C204,321 203,306 203,294 Z"/>
+      <path d="M234,424 C238,446 239,466 237,486 C236,498 234,506 232,512
+               L213,510 C213,496 211,474 210,456 C209,440 209,430 209,422 Z"/>
+      <path d="M232,516 C233,524 234,530 234,534 C234,538 231,540 224,540
+               L209,540 C207,540 206,538 207,534 C208,528 211,522 213,514 Z"/>
+    </g>
+    <!-- detalhe muscular -->
+    <g fill="none" stroke="var(--ink3)" stroke-width=".9" opacity=".5">
+      <path d="M200,120 L200,196"/>
+      <path d="M172,132 C182,146 190,150 199,150"/>
+      <path d="M228,132 C218,146 210,150 201,150"/>
+      <path d="M180,196 L220,196 M181,212 L219,212 M183,228 L217,228"/>
+      <path d="M200,196 L200,240"/>
+      <circle cx="200" cy="246" r="2.4" fill="var(--ink3)" stroke="none"/>
+    </g>
+
+    <!-- ============ VISTA 1 · CIRCUNFERÊNCIAS ============ -->
+    <g id="v1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif">
+      <g stroke="var(--accent)" stroke-width="1.1" stroke-dasharray="3 3" opacity=".75" fill="none">
+        <path d="M96,104 L150,110"/>
+        <path d="M92,146 L172,148"/>
+        <path d="M84,186 L131,172"/>
+        <path d="M88,230 L169,232"/>
+        <path d="M82,268 L129,266"/>
+        <path d="M92,338 L176,340"/>
+        <path d="M92,458 L171,456"/>
+        <path d="M316,186 L269,172"/>
+        <path d="M318,268 L271,266"/>
+        <path d="M312,306 L237,286"/>
+        <path d="M310,338 L224,340"/>
+        <path d="M310,458 L229,456"/>
+      </g>
+      <!-- linhas de circunferência sobre o corpo -->
+      <g stroke="var(--accent)" stroke-width="1.6" fill="none" opacity=".9">
+        <path d="M150,110 C168,120 232,120 250,110"/>
+        <path d="M158,146 C176,157 224,157 242,146"/>
+        <path d="M168,232 C180,240 220,240 232,232"/>
+        <path d="M164,286 C180,296 220,296 236,286"/>
+        <path d="M162,340 C172,347 190,347 196,340"/>
+        <path d="M204,340 C210,347 228,347 238,340"/>
+        <path d="M163,456 C170,462 184,462 190,456"/>
+        <path d="M210,456 C216,462 230,462 237,456"/>
+        <path d="M130,172 C138,179 148,179 153,172"/>
+        <path d="M247,172 C252,179 262,179 270,172"/>
+        <path d="M129,266 C135,272 145,272 150,266"/>
+        <path d="M250,266 C255,272 265,272 271,266"/>
+      </g>
+      <g fill="var(--ink)" text-anchor="start">
+        <text x="6" y="100" font-size="10.5" fill="var(--ink3)" font-weight="600">OMBRO</text>
+        <text x="6" y="115" font-size="14" font-weight="800">108,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="6" y="142" font-size="10.5" fill="var(--ink3)" font-weight="600">PEITO</text>
+        <text x="6" y="157" font-size="14" font-weight="800">93,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="6" y="182" font-size="10.5" fill="var(--ink3)" font-weight="600">BÍCEPS ESQ.</text>
+        <text x="6" y="197" font-size="14" font-weight="800">30,0 <tspan font-size="10" fill="var(--accent)">→33,0</tspan></text>
+        <text x="6" y="226" font-size="10.5" fill="var(--ink3)" font-weight="600">BARRIGA</text>
+        <text x="6" y="241" font-size="14" font-weight="800">87,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="6" y="264" font-size="10.5" fill="var(--ink3)" font-weight="600">ANTEBRAÇO ESQ.</text>
+        <text x="6" y="279" font-size="14" font-weight="800">24,5 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="6" y="334" font-size="10.5" fill="var(--ink3)" font-weight="600">QUADRÍCEPS ESQ.</text>
+        <text x="6" y="349" font-size="14" font-weight="800">52,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="6" y="454" font-size="10.5" fill="var(--ink3)" font-weight="600">PANTURRILHA ESQ.</text>
+        <text x="6" y="469" font-size="14" font-weight="800">33,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+      </g>
+      <g fill="var(--ink)" text-anchor="end">
+        <text x="394" y="182" font-size="10.5" fill="var(--ink3)" font-weight="600">BÍCEPS DIR.</text>
+        <text x="394" y="197" font-size="14" font-weight="800">31,0 <tspan font-size="10" fill="var(--accent)">→33,5</tspan></text>
+        <text x="394" y="264" font-size="10.5" fill="var(--ink3)" font-weight="600">ANTEBRAÇO DIR.</text>
+        <text x="394" y="279" font-size="14" font-weight="800">25,5 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="394" y="302" font-size="10.5" fill="var(--ink3)" font-weight="600">GLÚTEO</text>
+        <text x="394" y="317" font-size="14" font-weight="800">91,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="394" y="334" font-size="10.5" fill="var(--ink3)" font-weight="600">QUADRÍCEPS DIR.</text>
+        <text x="394" y="349" font-size="14" font-weight="800">51,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+        <text x="394" y="454" font-size="10.5" fill="var(--ink3)" font-weight="600">PANTURRILHA DIR.</text>
+        <text x="394" y="469" font-size="14" font-weight="800">33,0 <tspan font-size="9.5" fill="var(--ink3)">cm</tspan></text>
+      </g>
+      <text x="200" y="576" text-anchor="middle" font-size="12" fill="var(--ink2)" font-weight="700">1,69 m · 64 kg · IMC 22,4</text>
+      <text x="200" y="592" text-anchor="middle" font-size="10.5" fill="var(--ink3)">→ valor do braço contraído (forçando)</text>
+    </g>
+
+    <!-- ============ VISTA 2 · DOBRAS ============ -->
+    <g id="v2" style="display:none" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif">
+      <g stroke="var(--fold)" stroke-width="1.1" stroke-dasharray="3 3" opacity=".8" fill="none">
+        <path d="M96,140 L185,146"/>
+        <path d="M84,180 L139,166"/>
+        <path d="M92,222 L166,168"/>
+        <path d="M96,262 L187,228"/>
+        <path d="M96,338 L179,338"/>
+        <path d="M96,452 L172,450"/>
+        <path d="M314,180 L261,166"/>
+        <path d="M310,222 L236,150"/>
+        <path d="M312,268 L233,252"/>
+      </g>
+      <!-- marcadores das dobras -->
+      <g fill="var(--fold)" stroke="var(--card)" stroke-width="1.6">
+        <circle cx="185" cy="146" r="6"/>
+        <circle cx="139" cy="166" r="6"/>
+        <circle cx="166" cy="168" r="6"/>
+        <circle cx="187" cy="228" r="7.5"/>
+        <circle cx="179" cy="338" r="6"/>
+        <circle cx="172" cy="450" r="5"/>
+        <circle cx="261" cy="166" r="6"/>
+        <circle cx="236" cy="150" r="6"/>
+        <circle cx="233" cy="252" r="6"/>
+      </g>
+      <g fill="var(--ink)" text-anchor="start">
+        <text x="6" y="136" font-size="10.5" fill="var(--ink3)" font-weight="600">PEITORAL</text>
+        <text x="6" y="151" font-size="14" font-weight="800">15 <tspan font-size="9.5" fill="var(--ink3)">mm</tspan></text>
+        <text x="6" y="176" font-size="10.5" fill="var(--ink3)" font-weight="600">BÍCEPS</text>
+        <text x="6" y="191" font-size="14" font-weight="800">9 <tspan font-size="9.5" fill="var(--ink3)">mm</tspan></text>
+        <text x="6" y="218" font-size="10.5" fill="var(--ink3)" font-weight="600">AXILAR MÉDIA</text>
+        <text x="6" y="233" font-size="14" font-weight="800">20 <tspan font-size="9.5" fill="var(--ink3)">mm</tspan></text>
+        <text x="6" y="258" font-size="10.5" fill="var(--ink3)" font-weight="600">ABDOMINAL</text>
+        <text x="6" y="273" font-size="15" font-weight="800" fill="var(--fold)">35 <tspan font-size="9.5" fill="var(--ink3)">mm</tspan></text>
+        <text x="6" y="334" font-size="10.5" fill="var(--ink3)" font-weight="600">COXA / QUADRÍCEPS</text>
+        <text x="6" y="349" font-size="14" font-weight="800">22 <tspan font-size="9.5" fill="var(--ink3)">mm</tspan></text>
+        <text x="6" y="448" font-size="10.5" fill="var(--ink3)" font-weight="600">PANTURRILHA</text>
+        <text x="6" y="463" font-size="14" font-weight="800">10 <tspan font-size="9.5" fill="var(--ink3)">mm</tspan></text>
+      </g>
+      <g fill="var(--ink)" text-anchor="end">
+        <text x="394" y="176" font-size="10.5" fill="var(--ink3)" font-weight="600">TRÍCEPS</text>
+        <text x="394" y="191" font-size="14" font-weight="800">12 <tspan font-size="9.5" fill="var(--ink3)">mm · costas</tspan></text>
+        <text x="394" y="218" font-size="10.5" fill="var(--ink3)" font-weight="600">SUBESCAPULAR</text>
+        <text x="394" y="233" font-size="14" font-weight="800">20 <tspan font-size="9.5" fill="var(--ink3)">mm · costas</tspan></text>
+        <text x="394" y="264" font-size="10.5" fill="var(--ink3)" font-weight="600">CULOTE</text>
+        <text x="394" y="279" font-size="14" font-weight="800">20 <tspan font-size="9.5" fill="var(--ink3)">mm · suprailíaca</tspan></text>
+      </g>
+      <text x="200" y="576" text-anchor="middle" font-size="12" fill="var(--ink2)" font-weight="700">Σ 9 dobras = 163 mm · Σ 7 (JP) = 144 mm</text>
+      <text x="200" y="592" text-anchor="middle" font-size="10.5" fill="var(--ink3)">tríceps e subescapular ficam nas costas — marcados por transparência</text>
+    </g>
+  </svg>
+  <div class="legend" id="legend">Toque nas abas para alternar entre as circunferências (fita métrica) e as dobras cutâneas (adipômetro).</div>
+</div>
+
+<h2>Percentual de gordura</h2>
+<div class="card">
+  <h3>≈ 20,9% de gordura corporal</h3>
+  <div class="ref" style="margin:-6px 0 12px">Média de três protocolos independentes de dobras cutâneas, todos com a equação de Siri para converter densidade em %. Idade usada: 29 anos.</div>
+
+  <div class="gauge">
+    <div style="width:13%;background:var(--infobg)"></div>
+    <div style="width:9.3%;background:var(--okbg)"></div>
+    <div style="width:23.3%;background:color-mix(in srgb,var(--ok) 22%,transparent)"></div>
+    <div style="width:23.3%;background:var(--warnbg)"></div>
+    <div style="width:31.1%;background:var(--badbg)"></div>
+    <div class="gmark" style="left:48.6%"></div>
+  </div>
+  <div class="glab">
+    <span style="width:13%"><b>essenc.</b>2–5%</span>
+    <span style="width:9.3%"><b>atleta</b>6–13%</span>
+    <span style="width:23.3%"><b>fitness</b>14–17%</span>
+    <span style="width:23.3%"><b>média</b>18–24%</span>
+    <span style="width:31.1%"><b>obesidade</b>≥25%</span>
+  </div>
+  <div class="ref" style="margin-top:10px">Escala ACE (American Council on Exercise) para homens. Você cai na <b>metade superior da faixa "média/aceitável"</b> — longe de obesidade, mas também longe da faixa fitness.</div>
+
+  <table style="margin-top:18px">
+    <tr><th>Protocolo</th><th style="text-align:right">Σ dobras</th><th style="text-align:right">%GC</th></tr>
+    <tr>
+      <td>Jackson &amp; Pollock 7<small>peitoral, axilar méd., tríceps, subescapular, abdominal, suprailíaca, coxa</small></td>
+      <td class="r">144 mm</td><td class="r">20,4%</td>
+    </tr>
+    <tr>
+      <td>Jackson &amp; Pollock 3<small>peitoral, abdominal, coxa</small></td>
+      <td class="r">72 mm</td><td class="r">21,1%</td>
+    </tr>
+    <tr>
+      <td>Durnin &amp; Womersley 4<small>bíceps, tríceps, subescapular, suprailíaca</small></td>
+      <td class="r">61 mm</td><td class="r">21,3%</td>
+    </tr>
+    <tr style="font-weight:800">
+      <td>Média das três<small>dispersão de apenas 0,9 ponto — estimativa consistente</small></td>
+      <td class="r">—</td><td class="r" style="color:var(--warn)">20,9%</td>
+    </tr>
+  </table>
+
+  <div class="row" style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
+    <div class="rt"><span class="name">Massa gorda</span><span class="val">13,4 <span class="unit">kg</span></span></div>
+    <div class="ref">64 kg × 20,9%</div>
+  </div>
+  <div class="row">
+    <div class="rt"><span class="name">Massa magra (livre de gordura)</span><span class="val">50,6 <span class="unit">kg</span></span></div>
+    <div class="ref">Índice de massa magra (FFMI) 17,7 — musculatura na média para altura de 1,69 m</div>
+  </div>
+  <div class="row">
+    <div class="rt"><span class="name">Peso se chegasse a 15% de gordura</span><span class="val">59,5 <span class="unit">kg</span></span></div>
+    <div class="ref">Mantendo os 50,6 kg de massa magra intactos, seriam <b>−4,5 kg de gordura</b>. Para 18%: 61,7 kg (−2,3 kg).</div>
+  </div>
+</div>
+
+<h2>Dobras cutâneas · 23/07/2026</h2>
+<div class="card">
+  <div class="ref" style="margin:-4px 0 14px">Espessura da prega de pele + gordura em cada ponto, em milímetros. A barra laranja compara cada dobra com a maior delas (abdominal, 35 mm).</div>
+  <div id="dobras"></div>
+</div>
+
+<h2>Circunferências · 23/07/2026</h2>
+<div class="card">
+  <div class="ref" style="margin:-4px 0 14px">Perímetros com fita métrica, em centímetros. Onde há lado esquerdo e direito, a diferença entre eles aparece como assimetria.</div>
+  <div id="circ"></div>
+</div>
+
+<h2>Índices derivados</h2>
+<div class="card">
+  <div id="indices"></div>
+</div>
+
+<h2>O que as medidas dizem</h2>
+<div class="alert w">
+  <div class="t">⚠️ A gordura está concentrada no centro</div>
+  <p>A dobra <b>abdominal (35 mm)</b> é 75% maior que a segunda colocada e quase <b>4× a do bíceps (9 mm)</b>. A cintura de 87 cm sobre 1,69 m dá razão <b>cintura/altura 0,51</b> (alvo &lt; 0,50) e <b>cintura/quadril 0,96</b> (a OMS marca risco aumentado em homens a partir de 0,90). É o padrão androide clássico — e é exatamente o tipo de distribuição que anda junto com a <b>glicose 102,2 mg/dL</b> do painel de exames.</p>
+</div>
+<div class="alert o">
+  <div class="t">✅ Simetria entre os lados praticamente perfeita</div>
+  <p>Braço 30,0 × 31,0 cm (1,0 cm, lado dominante), antebraço 24,5 × 25,5 cm (1,0 cm), quadríceps 52,0 × 51,0 cm (1,0 cm) e panturrilhas idênticas em 33,0 cm. Todas as diferenças ficam em <b>2–4%</b>, dentro do que se considera variação normal (&lt; 5%). Não há sinal de desequilíbrio a corrigir.</p>
+</div>
+<div class="alert i">
+  <div class="t">ℹ️ Três protocolos, mesma resposta</div>
+  <p>Jackson &amp; Pollock de 7 e de 3 dobras e Durnin &amp; Womersley de 4 dobras chegaram a <b>20,4%, 21,1% e 21,3%</b>. Quando fórmulas com pontos de coleta diferentes convergem assim, a estimativa é sólida — o número está certo dentro do erro do método.</p>
+</div>
+
+<div class="card">
+  <ol class="ins">
+    <li><b>Extremidades limpas, meio carregado.</b> Panturrilha (10 mm) e bíceps (9 mm) são as duas menores dobras do conjunto; abdominal (35 mm), coxa (22 mm) e o trio axilar/subescapular/culote (20 mm cada) puxam o total para cima. Perder gordura, no seu caso, é essencialmente um projeto de <b>tronco</b>.</li>
+    <li><b>O IMC não conta essa história.</b> Com 22,4 você está confortavelmente na faixa "normal" (18,5–24,9) — mas 20,9% de gordura e cintura/altura 0,51 mostram que o IMC está mascarando a distribuição. É o caso típico de peso normal com composição a melhorar.</li>
+    <li><b>O braço ganha 3,0 cm quando contraído</b> (30,0 → 33,0 à esquerda; 31,0 → 33,5 à direita) — 10% e 8% de diferença, uma resposta contrátil normal e bem simétrica.</li>
+    <li><b>Ombro 108 cm sobre cintura 87 cm</b> dá razão 1,24. Como a cintura é o denominador, esse índice melhora sozinho conforme os 35 mm da dobra abdominal caem — sem precisar de um centímetro a mais de ombro.</li>
+    <li><b>A meta realista é gordura, não peso.</b> Sair de 20,9% para 18% preservando massa magra significa 61,7 kg na balança (−2,3 kg); chegar a 15% significa 59,5 kg (−4,5 kg). Em ambos os cenários os 50,6 kg de massa magra ficam de pé — é o que a balança sozinha nunca mostra.</li>
+    <li><b>Altura: 1,69 m aqui, 1,68 m na anotação original.</b> Este painel usa 1,69 m, como você informou. Com 1,68 m o IMC iria a 22,7 e a razão cintura/altura a 0,52 — a leitura não muda.</li>
+    <li><b>Este é o marco zero.</b> Dobras cutâneas medem bem a <i>mudança</i> e apenas razoavelmente o <i>valor absoluto</i>. Repetindo com o mesmo adipômetro, mesmo avaliador e mesmos pontos daqui a 8–12 semanas, a comparação vale muito mais que qualquer um dos números isolados de hoje.</li>
+  </ol>
+</div>
+
+<div class="disc">
+  <b>Aviso.</b> As porcentagens de gordura são <b>estimativas</b> derivadas de equações populacionais de dobras cutâneas — o erro típico do método é de ±3 a 5 pontos percentuais, e depende do adipômetro, da técnica e de quem mediu. Este painel organiza e interpreta números; não é avaliação física nem diagnóstico. Para conduta, procure um profissional de educação física e/ou nutricionista.
+</div>
+
+<div class="foot">
+  Medidas aferidas em 23/07/2026 · peso 64 kg e altura 1,69 m informados pelo Caio.<br>
+  Equações: Jackson &amp; Pollock (1978) 7 e 3 dobras, Durnin &amp; Womersley (1974) 4 dobras, conversão de Siri (1961).<br>
+  Faixas de referência: ACE (gordura corporal), OMS (cintura/quadril, IMC), Ashwell (cintura/altura).
+</div>
+
+</div>
+
+<script>
+/* ---------- dados ---------- */
+const DOBRAS = [
+  {n:"Abdominal",            v:35, obs:"vertical, ao lado do umbigo"},
+  {n:"Coxa / quadríceps",    v:22, obs:"vertical, no meio da coxa"},
+  {n:"Axilar média",         v:20, obs:"com o braço erguido, linha axilar média"},
+  {n:"Subescapular",         v:20, obs:"diagonal, logo abaixo da escápula"},
+  {n:"Culote / suprailíaca", v:20, obs:"diagonal, braço erguido, acima da crista ilíaca"},
+  {n:"Peitoral",             v:15, obs:"diagonal, entre a axila e o mamilo"},
+  {n:"Tríceps",              v:12, obs:"vertical, no centro da face posterior do braço"},
+  {n:"Panturrilha",          v:10, obs:"vertical, face interna, ao lado da canela"},
+  {n:"Bíceps",               v:9,  obs:"vertical, face anterior do braço"}
+];
+
+const CIRC = [
+  {n:"Ombro",       e:108.0, tag:["n","MAIOR"]},
+  {n:"Glúteo",      e:91.0},
+  {n:"Peito",       e:93.0},
+  {n:"Barriga",     e:87.0, tag:["at","ATENÇÃO"], obs:"cintura/altura 0,51 — alvo abaixo de 0,50"},
+  {n:"Braço",       e:30.0, d:31.0, obs:"contraído: 33,0 (esq.) e 33,5 (dir.) — ganho de 3,0 e 2,5 cm"},
+  {n:"Antebraço",   e:24.5, d:25.5},
+  {n:"Quadríceps",  e:52.0, d:51.0},
+  {n:"Panturrilha", e:33.0, d:33.0, tag:["ok","SIMÉTRICO"]}
+];
+
+const INDICES = [
+  {n:"IMC — índice de massa corporal", v:"22,4", u:"kg/m²", tag:["ok","NORMAL"],
+   obs:"Faixa normal 18,5–24,9. Com 1,68 m seria 22,7 — mesma classificação."},
+  {n:"Cintura / altura", v:"0,51", tag:["at","LIMÍTROFE"],
+   obs:"87 ÷ 169. O alvo é ficar abaixo de 0,50; é o índice mais simples e mais preditivo de risco cardiometabólico."},
+  {n:"Cintura / quadril", v:"0,96", tag:["at","ATENÇÃO"],
+   obs:"87 ÷ 91. A OMS marca risco aumentado em homens a partir de 0,90."},
+  {n:"Ombro / cintura", v:"1,24", tag:["n","FORMA"],
+   obs:"108 ÷ 87. Índice estético (V-taper); melhora conforme a cintura cai."},
+  {n:"FFMI — índice de massa livre de gordura", v:"17,7", u:"kg/m²", tag:["n","MÉDIA"],
+   obs:"50,6 ÷ 1,69². Homens destreinados ficam em 16–18; o teto natural gira em torno de 25."},
+  {n:"Gordura corporal estimada", v:"20,9", u:"%", tag:["at","MÉDIA/ACEITÁVEL"],
+   obs:"Faixa fitness começa em 17%. Erro típico do método: ±3 a 5 pontos."}
+];
+
+/* ---------- render ---------- */
+const br = n => Number.isInteger(n) ? String(n) : String(n).replace(".",",");
+const cm = n => n.toFixed(1).replace(".",",");
+
+document.getElementById("dobras").innerHTML = DOBRAS.map(d=>{
+  const p = (d.v/35)*100;
+  return '<div class="row"><div class="rt">'+
+    '<span class="name">'+d.n+'</span>'+
+    '<span class="val">'+br(d.v)+' <span class="unit">mm</span></span></div>'+
+    '<div class="ref">'+d.obs+'</div>'+
+    '<div class="mbar"><i style="width:'+p.toFixed(1)+'%"></i></div></div>';
+}).join('');
+
+document.getElementById("circ").innerHTML = CIRC.map(c=>{
+  let val, extra = "";
+  if(c.d!==undefined){
+    val = cm(c.e)+' <span class="unit">esq</span> · '+cm(c.d)+' <span class="unit">dir</span>';
+    const dif = Math.abs(c.e-c.d), pct = dif/Math.max(c.e,c.d)*100;
+    extra = dif===0 ? 'Lados idênticos.'
+      : 'Assimetria de '+cm(dif)+' cm ('+pct.toFixed(1).replace(".",",")+'%) — dentro da variação normal.';
+  } else {
+    val = cm(c.e)+' <span class="unit">cm</span>';
+  }
+  const tag = c.tag ? '<span class="tag '+c.tag[0]+'">'+c.tag[1]+'</span>' : '';
+  const refs = [extra, c.obs].filter(Boolean).map(t=>'<div class="ref">'+t+'</div>').join('');
+  return '<div class="row"><div class="rt">'+
+    '<span class="name">'+c.n+'</span><span class="val">'+val+'</span>'+tag+
+    '</div>'+refs+'</div>';
+}).join('');
+
+document.getElementById("indices").innerHTML = INDICES.map(i=>
+  '<div class="row"><div class="rt">'+
+  '<span class="name">'+i.n+'</span>'+
+  '<span class="val">'+i.v+(i.u?' <span class="unit">'+i.u+'</span>':'')+'</span>'+
+  '<span class="tag '+i.tag[0]+'">'+i.tag[1]+'</span></div>'+
+  '<div class="ref">'+i.obs+'</div></div>'
+).join('');
+
+/* ---------- abas do boneco ---------- */
+const LEGENDAS = {
+  1:"Circunferências medidas com fita métrica. As setas → mostram o braço contraído.",
+  2:"As 9 dobras cutâneas e onde cada uma foi pinçada. O círculo maior é a abdominal (35 mm), a maior de todas."
+};
+function setTab(n){
+  document.getElementById("v1").style.display = n===1 ? "" : "none";
+  document.getElementById("v2").style.display = n===2 ? "" : "none";
+  document.getElementById("t1").classList.toggle("on", n===1);
+  document.getElementById("t2").classList.toggle("on", n===2);
+  document.getElementById("legend").textContent = LEGENDAS[n];
+}
+setTab(1);
+</script>
+</body>
+</html>

@@ -59,6 +59,18 @@ h3{font-size:15px;margin:0 0 12px;font-weight:700}
 .kpi .l{font-size:11px;color:var(--ink2);margin-top:4px;line-height:1.25}
 .kpi.g .n{color:var(--ok)} .kpi.y .n{color:var(--warn)} .kpi.r .n{color:var(--bad)}
 
+/* botão para o painel de medidas */
+.cta{display:flex;align-items:center;gap:12px;margin:14px 0 4px;padding:14px 16px;
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  box-shadow:var(--shadow);text-decoration:none;color:var(--ink)}
+.cta:active{transform:scale(.985)}
+.cta-ic{font-size:24px;line-height:1;width:44px;height:44px;flex:0 0 44px;border-radius:12px;
+  background:var(--infobg);display:flex;align-items:center;justify-content:center}
+.cta-tx{flex:1;min-width:0}
+.cta-tx b{display:block;font-size:15px;font-weight:700}
+.cta-tx i{display:block;font-style:normal;font-size:12px;color:var(--ink2);margin-top:2px;line-height:1.4}
+.cta-ar{color:var(--accent);font-size:18px;font-weight:800}
+
 /* alertas */
 .alert{border-radius:14px;padding:14px 16px;margin:10px 0;border:1px solid transparent}
 .alert .t{font-weight:700;font-size:15px;margin-bottom:4px}
@@ -126,6 +138,15 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
 </header>
 
 <div id="kpis" class="kpis"></div>
+
+<a class="cta" href="medidas.html" target="_blank" rel="noopener">
+  <span class="cta-ic">📏</span>
+  <span class="cta-tx">
+    <b>Medidas &amp; Composição corporal</b>
+    <i>9 dobras cutâneas, 12 circunferências e ~20,9% de gordura · 23/07/2026</i>
+  </span>
+  <span class="cta-ar">↗</span>
+</a>
 
 <h2>Pontos de atenção</h2>
 <div class="alert w">

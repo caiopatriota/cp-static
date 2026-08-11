@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Cache-Control" content="no-store">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="inflacao-icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="inflacao-icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Inflação">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e1624">
+<title>Inflação — Caio</title>
+</head>
+<body>
+<style>
+:root{
+  color-scheme: light;
+  --surface-0:#f6f6f4; --surface-1:#fcfcfb; --surface-2:#efefec;
+  --border:#e4e4de; --border-strong:#cfcfc8;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#84837c;
+  --s1:#2a78d6; --s2:#eda100;
+  --alta:#c4381f; --queda:#00897a;
+  --alta-bg:#fbeae6; --queda-bg:#e2f4f0;
+  --grid:#e8e8e3;
+  --fill:rgba(42,120,214,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --surface-0:#121211; --surface-1:#1a1a19; --surface-2:#232322;
+    --border:#2e2e2c; --border-strong:#42423e;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#908f86;
+    --s1:#3987e5; --s2:#c98500;
+    --alta:#e0664a; --queda:#28a891;
+    --alta-bg:#3a1a13; --queda-bg:#10322c;
+    --grid:#2a2a28;
+    --fill:rgba(57,135,229,.16);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface-0:#121211; --surface-1:#1a1a19; --surface-2:#232322;
+  --border:#2e2e2c; --border-strong:#42423e;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#908f86;
+  --s1:#3987e5; --s2:#c98500;
+  --alta:#e0664a; --queda:#28a891;
+  --alta-bg:#3a1a13; --queda-bg:#10322c;
+  --grid:#2a2a28;
+  --fill:rgba(57,135,229,.16);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--surface-0); color:var(--text-primary);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
+  margin:0; padding:20px 14px calc(40px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+
+.head h1{font-size:23px;line-height:1.2;letter-spacing:-.022em;font-weight:660;margin:0;text-wrap:balance}
+.head .sub{color:var(--text-muted);font-size:13px;margin-top:5px}
+
+.filters{display:flex;gap:7px;overflow-x:auto;padding:2px 0 4px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;scroll-snap-align:start;background:var(--surface-1);border:1px solid var(--border);
+  color:var(--text-secondary);border-radius:999px;padding:9px 16px;font-size:14px;font-family:inherit;
+  cursor:pointer;min-height:40px;transition:background .12s,border-color .12s,color .12s}
+.chip:hover{border-color:var(--border-strong);color:var(--text-primary)}
+.chip[aria-pressed="true"]{background:var(--s1);border-color:var(--s1);color:#fff;font-weight:560}
+.chip:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+
+.hero{background:var(--surface-1);border:1px solid var(--border);border-radius:13px;padding:17px 16px}
+.hero .lab{font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.075em;font-weight:600}
+.hero .big{font-size:46px;font-weight:680;letter-spacing:-.04em;line-height:1.02;margin-top:6px;
+  font-variant-numeric:tabular-nums}
+.hero .cmp{font-size:13.5px;color:var(--text-secondary);margin-top:8px;line-height:1.5}
+.up{color:var(--alta)} .down{color:var(--queda)}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.kpi{background:var(--surface-1);border:1px solid var(--border);border-radius:13px;padding:13px 14px}
+.kpi.wide{grid-column:1 / -1}
+.kpi .lab{font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.075em;font-weight:600}
+.kpi .val{font-size:22px;font-weight:650;letter-spacing:-.03em;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi .note{font-size:12px;color:var(--text-secondary);margin-top:3px;font-variant-numeric:tabular-nums}
+
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:13px;padding:15px 15px 12px}
+.card h2{font-size:14.5px;font-weight:620;letter-spacing:-.012em;margin:0}
+.card .hint{font-size:12.5px;color:var(--text-muted);margin-top:3px;line-height:1.45}
+.card .body{margin-top:12px}
+
+.readout{background:var(--surface-2);border-radius:9px;padding:9px 11px;margin-top:11px;min-height:56px;
+  font-variant-numeric:tabular-nums;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.readout b{color:var(--text-primary);font-weight:620}
+
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12.5px;color:var(--text-secondary)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+
+svg{display:block;max-width:100%;height:auto;overflow:visible;touch-action:pan-y}
+
+/* ranking: barra em % da largura, texto em px reais */
+.rank{display:flex;flex-direction:column;gap:7px}
+.rank .r{display:grid;grid-template-columns:minmax(88px,34%) 1fr 58px;align-items:center;gap:9px}
+.rank .n{font-size:13px;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank .track{position:relative;height:15px;background:var(--surface-2);border-radius:5px}
+.rank .track.eixo::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--border-strong)}
+.rank .fill{position:absolute;top:0;height:15px;border-radius:4px}
+.rank .v{font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;font-weight:560}
+.gridline{stroke:var(--grid);stroke-width:1}
+.axistext{fill:var(--text-muted);font-size:10.5px;font-variant-numeric:tabular-nums}
+.axistext.b{fill:var(--text-secondary);font-weight:600}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{text-align:right;font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;
+  font-weight:600;padding:0 0 7px;border-bottom:1px solid var(--border)}
+th:first-child{text-align:left}
+td{padding:9px 0;border-bottom:1px solid var(--border);text-align:right;color:var(--text-secondary)}
+td:first-child{text-align:left;color:var(--text-primary)}
+tr:last-child td{border-bottom:none}
+.nome{font-weight:560}
+.un{color:var(--text-muted);font-size:12px;font-weight:400}
+.tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:999px;background:var(--surface-2);
+  color:var(--text-muted);margin-left:6px;vertical-align:1px}
+
+td.nw{white-space:nowrap}
+.so-estreito{display:none}
+@media (max-width:560px){
+  .so-largo{display:none}
+  .so-estreito{display:block}
+  table{font-size:13px}
+  td{padding:9px 0 9px 8px}
+  .kpi .val{font-size:20px}
+}
+
+.rowitem{cursor:pointer}
+.rowitem:hover td{background:var(--surface-2)}
+.det td{background:var(--surface-2);padding:11px 12px;text-align:left;font-size:12.5px;color:var(--text-secondary)}
+.det .h{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:9px}
+.det ul{margin:0;padding-left:17px;columns:2;column-gap:18px}
+@media (max-width:520px){ .det ul{columns:1} }
+
+.lanc{display:flex;flex-direction:column;gap:0}
+.lanc .l{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13.5px}
+.lanc .l:last-child{border-bottom:none}
+.lanc .d{color:var(--text-muted);font-size:12px;font-variant-numeric:tabular-nums}
+.lanc .v{font-variant-numeric:tabular-nums;font-weight:560;white-space:nowrap}
+
+.empty{text-align:center;padding:34px 16px;color:var(--text-secondary)}
+.empty .big{font-size:34px}
+.empty code{background:var(--surface-2);padding:2px 7px;border-radius:6px;font-size:13px}
+
+.foot{color:var(--text-muted);font-size:12px;line-height:1.6;padding:4px 2px 0}
+.foot code{background:var(--surface-2);padding:1px 6px;border-radius:5px;font-size:12px;color:var(--text-secondary)}
+.toggle{background:none;border:none;color:var(--s1);font:inherit;font-size:12.5px;cursor:pointer;padding:6px 0 0}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const D = {"gerado_em": "2026-08-11T09:54:49", "geral": {"meses": [], "indice": [], "detalhe": {}}, "anos": [], "por_categoria": {}, "itens": [], "n_precos": 0, "n_itens": 0, "m12": null, "desde_inicio": null, "ultimos": [], "ipca": {"2022": 5.79, "2023": 4.62, "2024": 4.83}};
+
+const MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const rotMes = ym => MES[+ym.slice(5,7)-1] + "/" + ym.slice(2,4);
+const brl = v => "R$ " + v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct = (v,c=1) => v==null ? "—" : (v>=0?"+":"") + v.toFixed(c).replace(".",",") + "%";
+const dataBR = d => d.slice(8,10)+"/"+d.slice(5,7)+"/"+d.slice(0,4);
+const cls = v => v==null ? "" : (v>0.049 ? "up" : (v<-0.049 ? "down" : ""));
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const el = (h) => { const t=document.createElement("template"); t.innerHTML=h.trim(); return t.content.firstElementChild; };
+
+let filtro = "Tudo";
+const app = document.getElementById("app");
+
+// ---- fonte de dados conforme o filtro ------------------------------------
+function fonte(){
+  if (filtro === "Tudo") return {indice: D.geral, anos: D.anos, itens: D.itens};
+  const c = D.por_categoria[filtro];
+  return {indice: c.indice, anos: c.anos, itens: D.itens.filter(i => i.categoria === filtro)};
+}
+
+// ---- graficos ------------------------------------------------------------
+// Os SVGs são desenhados na largura REAL do container (medida no DOM). Se o
+// viewBox fosse fixo, o texto escalaria junto e sairia ilegível no celular.
+// Linha: indice encadeado. Uma serie só -> sem legenda, o titulo já nomeia.
+function grafLinha(meses, valores, W){
+  if (meses.length < 2) return '<div class="readout">Preciso de pelo menos dois meses de medição pra desenhar a curva.</div>';
+  const H=200,PL=34,PR=10,PT=12,PB=24;
+  const min=Math.min(...valores), max=Math.max(...valores);
+  const span = (max-min) || 1, lo = min - span*0.12, hi = max + span*0.12;
+  const x = i => PL + i*(W-PL-PR)/(meses.length-1);
+  const y = v => PT + (hi-v)*(H-PT-PB)/(hi-lo);
+
+  let g="";
+  for(let k=0;k<=3;k++){
+    const v = lo + (hi-lo)*k/3, yy = y(v);
+    g += `<line class="gridline" x1="${PL}" x2="${W-PR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}"/>`
+       + `<text class="axistext" x="${PL-7}" y="${(yy+3.5).toFixed(1)}" text-anchor="end">${v.toFixed(0)}</text>`;
+  }
+  const pts = valores.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const area = `${PL},${y(lo).toFixed(1)} ${pts} ${(W-PR)},${y(lo).toFixed(1)}`;
+
+  // um rótulo a cada N meses, com folga de 46px pro último não colidir
+  const cabem = Math.max(2, Math.floor((W-PL-PR)/56));
+  const passo = Math.max(1, Math.ceil((meses.length-1)/cabem));
+  let lx="", ultimoX=-1e9;
+  for(let i=0;i<meses.length-1;i+=passo){
+    if(x(meses.length-1) - x(i) < 58) break;
+    lx += `<text class="axistext" x="${x(i).toFixed(1)}" y="${H-7}" text-anchor="middle">${rotMes(meses[i])}</text>`;
+    ultimoX = x(i);
+  }
+  lx += `<text class="axistext" x="${x(meses.length-1).toFixed(1)}" y="${H-7}" text-anchor="end">${rotMes(meses[meses.length-1])}</text>`;
+
+  // marcador só onde houve medição nova (o indice mexeu)
+  let dots="";
+  valores.forEach((v,i)=>{
+    const mexeu = i===0 || Math.abs(v-valores[i-1])>1e-9;
+    if(mexeu) dots += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3.2" fill="var(--s1)" stroke="var(--surface-1)" stroke-width="2"/>`;
+  });
+
+  // alvos de toque generosos
+  let hit="";
+  const w=(W-PL-PR)/Math.max(1,meses.length-1);
+  meses.forEach((m,i)=>{
+    hit += `<rect data-i="${i}" x="${(x(i)-w/2).toFixed(1)}" y="0" width="${w.toFixed(1)}" height="${H}" fill="transparent"/>`;
+  });
+
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Índice de preços, base 100">
+    ${g}
+    <polygon points="${area}" fill="var(--fill)"/>
+    <polyline points="${pts}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}${lx}
+    <line id="cross" x1="0" x2="0" y1="${PT}" y2="${H-PB}" stroke="var(--border-strong)" stroke-width="1" opacity="0"/>
+    <g id="hits">${hit}</g>
+  </svg>`;
+}
+
+// Barras por ano: minha inflação × IPCA. Duas séries -> legenda + rótulo direto.
+function grafBarras(anos, W){
+  const temIpca = anos.some(a => a.ipca != null);
+  const H=190,PL=6,PR=6,PT=20,PB=26;
+  const vals = anos.flatMap(a => [a.var, a.ipca].filter(v=>v!=null));
+  const max = Math.max(1, ...vals.map(Math.abs));
+  const lo = Math.min(0, ...vals) < 0 ? -max : 0, hi = max;
+  const y = v => PT + (hi-v)*(H-PT-PB)/(hi-lo || 1);
+  const y0 = y(0);
+  const bw = (W-PL-PR)/anos.length;
+  const nser = temIpca ? 2 : 1;
+  const largura = Math.max(8, Math.min(42, (bw*0.72)/nser - 1));  // 2px de respiro entre barras
+
+  let s = `<line class="gridline" x1="${PL}" x2="${W-PR}" y1="${y0.toFixed(1)}" y2="${y0.toFixed(1)}"/>`;
+  anos.forEach((a,i)=>{
+    const cx = PL + bw*i + bw/2;
+    // ano sem IPCA publicado: a barra sozinha fica centrada no slot do ano
+    const par = temIpca && a.ipca != null;
+    const x1 = par ? cx - largura - 1 : cx - largura/2;
+    const desenha = (v,x,cor) => {
+      if(v==null) return "";
+      const alt = Math.abs(y(v)-y0), top = v>=0 ? y(v) : y0;
+      const r = Math.min(4, alt);
+      return `<path d="M${x.toFixed(1)},${(v>=0?top+r:top).toFixed(1)}
+        ${v>=0 ? `a${r},${r} 0 0 1 ${r},${-r} h${(largura-2*r).toFixed(1)} a${r},${r} 0 0 1 ${r},${r} v${(alt-r).toFixed(1)} h-${largura.toFixed(1)} z`
+               : `h${largura.toFixed(1)} v${(alt-r).toFixed(1)} a${r},${r} 0 0 1 -${r},${r} h-${(largura-2*r).toFixed(1)} a${r},${r} 0 0 1 -${r},-${r} z`}"
+        fill="${cor}"/>`;
+    };
+    s += desenha(a.var, x1, "var(--s1)");
+    if(par) s += desenha(a.ipca, cx+1, "var(--s2)");
+
+    const topo = a.var>=0 ? y(a.var)-7 : y(a.var)+15;
+    s += `<text class="axistext b" x="${(x1+largura/2).toFixed(1)}" y="${topo.toFixed(1)}" text-anchor="middle">${pct(a.var,1)}</text>`;
+    if(par){
+      const t2 = a.ipca>=0 ? y(a.ipca)-7 : y(a.ipca)+15;
+      s += `<text class="axistext" x="${(cx+1+largura/2).toFixed(1)}" y="${t2.toFixed(1)}" text-anchor="middle">${a.ipca.toFixed(1).replace(".",",")}%</text>`;
+    }
+    s += `<text class="axistext b" x="${cx.toFixed(1)}" y="${H-8}" text-anchor="middle">${a.ano}${a.parcial?"*":""}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Inflação por ano">${s}</svg>`;
+}
+
+// Ranking por item — HTML puro (barra em %), pra o texto não escalar junto
+function grafRanking(itens){
+  const lista = itens.filter(i => i.var_anualizada != null)
+                     .sort((a,b)=>b.var_anualizada-a.var_anualizada).slice(0,14);
+  if(!lista.length) return `<div class="readout">Nenhum item tem duas medições espaçadas o bastante ainda. Continue anotando — a partir da segunda vez eu calculo o ritmo.</div>`;
+  const max = Math.max(...lista.map(i=>Math.abs(i.var_anualizada)), 1);
+  const temNeg = lista.some(i => i.var_anualizada < 0);
+  return `<div class="rank">${lista.map(it=>{
+    const v = it.var_anualizada, w = Math.max(1.5, Math.abs(v)/max*100*(temNeg?0.5:1));
+    const cor = v>=0 ? "var(--alta)" : "var(--queda)";
+    const barra = temNeg
+      ? `<div class="track eixo"><div class="fill" style="width:${w}%;${v>=0?`left:50%`:`right:50%`};background:${cor}"></div></div>`
+      : `<div class="track"><div class="fill" style="width:${w}%;left:0;background:${cor}"></div></div>`;
+    return `<div class="r"><div class="n">${esc(it.nome)}</div>${barra}
+      <div class="v ${cls(v)}">${pct(v)}</div></div>`;
+  }).join("")}</div>`;
+}
+
+function sparkline(serie){
+  if(serie.length<2) return "";
+  const W=180,H=30,vs=serie.map(p=>p.v);
+  const min=Math.min(...vs),max=Math.max(...vs),sp=(max-min)||1;
+  const t0=Date.parse(serie[0].d), t1=Date.parse(serie[serie.length-1].d), dt=(t1-t0)||1;
+  const pts=serie.map(p=>`${(2+(Date.parse(p.d)-t0)/dt*(W-4)).toFixed(1)},${(H-3-(p.v-min)/sp*(H-6)).toFixed(1)}`).join(" ");
+  const sobe = vs[vs.length-1] >= vs[0];
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:${W}px;max-width:100%"><polyline points="${pts}" fill="none"
+    stroke="${sobe?"var(--alta)":"var(--queda)"}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+
+// ---- render --------------------------------------------------------------
+function render(){
+  const f = fonte();
+  const anoAtual = new Date().getFullYear();
+  const doAno = f.anos.find(a=>a.ano===anoAtual);
+  const cats = Object.keys(D.por_categoria);
+
+  if(!D.n_precos){
+    app.innerHTML = `<div class="head"><h1>Inflação — Caio</h1>
+      <div class="sub">A sua, não a do IBGE.</div></div>
+      <div class="card"><div class="empty"><div class="big">📈</div>
+      <p style="margin:12px 0 6px"><b>Ainda não tem nenhum preço aqui.</b></p>
+      <p>Manda pro bot no Telegram, em português mesmo:</p>
+      <p style="margin-top:10px"><code>restaurante varandas 108 o quilo</code></p>
+      <p><code>gasolina 6,29 o litro</code></p>
+      <p style="margin-top:14px;font-size:13px">A partir da <b>segunda</b> vez que você anotar o mesmo item,
+      eu começo a calcular quanto ele subiu — e a média disso tudo vira a sua inflação.</p>
+      </div></div>`;
+    return;
+  }
+
+  const kpi = (lab,val,nota,c="") =>
+    `<div class="kpi"><div class="lab">${lab}</div><div class="val ${c}">${val}</div>${nota?`<div class="note">${nota}</div>`:""}</div>`;
+
+  let cmp = "";
+  if(doAno && doAno.ipca != null)
+    cmp = `IPCA no mesmo ano: ${doAno.ipca.toFixed(2).replace(".",",")}% — você está ${
+      doAno.var > doAno.ipca ? `<b>${(doAno.var-doAno.ipca).toFixed(1).replace(".",",")} p.p. acima</b>` :
+      `<b>${(doAno.ipca-doAno.var).toFixed(1).replace(".",",")} p.p. abaixo</b>`}.`;
+  else if(doAno)
+    cmp = `Acumulado de ${rotMes(doAno.de)} a ${rotMes(doAno.ate)}${doAno.parcial?" (ano ainda correndo)":""}.`;
+
+  const nItens = f.itens.length;
+  const nMed = f.itens.reduce((s,i)=>s+i.n,0);
+
+  app.innerHTML = `
+    <div class="head">
+      <h1>Inflação — Caio</h1>
+      <div class="sub">A sua, calculada só com os preços que você anota.
+        ${nItens} ${nItens===1?"item":"itens"} · ${nMed} ${nMed===1?"medição":"medições"}</div>
+    </div>
+
+    <div class="filters" id="chips">
+      <button class="chip" data-f="Tudo" aria-pressed="${filtro==="Tudo"}">Tudo</button>
+      ${cats.map(c=>`<button class="chip" data-f="${esc(c)}" aria-pressed="${filtro===c}">${esc(c)} <span style="opacity:.6">${D.por_categoria[c].n_itens}</span></button>`).join("")}
+    </div>
+
+    <div class="hero">
+      <div class="lab">Sua inflação em ${anoAtual}${filtro!=="Tudo"?" · "+esc(filtro):""}</div>
+      <div class="big ${cls(doAno?doAno.var:null)}">${doAno?pct(doAno.var,2):"—"}</div>
+      <div class="cmp">${cmp}</div>
+    </div>
+
+    <div class="kpis">
+      ${kpi("Últimos 12 meses", janela12(f.indice), "média ponderada dos seus itens", cls(janela12v(f.indice)))}
+      ${kpi("Desde o começo", pctDesde(f.indice), f.indice.meses.length?`${rotMes(f.indice.meses[0])} → ${rotMes(f.indice.meses[f.indice.meses.length-1])}`:"", cls(desdeV(f.indice)))}
+      ${kpi("Item que mais subiu", topo(f.itens,1), topoNome(f.itens,1), cls(topoV(f.itens,1)))}
+      ${kpi("Item que mais segurou", topo(f.itens,-1), topoNome(f.itens,-1), cls(topoV(f.itens,-1)))}
+    </div>
+
+    <div class="card">
+      <h2>Índice de preços · base 100</h2>
+      <div class="hint">Cada vez que você reanota um item, a variação dele entra aqui com o peso que você deu.
+        A linha é o efeito acumulado no seu bolso.</div>
+      <div class="body" id="gLinha"></div>
+      <div class="readout" id="ro">Passe o dedo sobre a linha pra ver mês a mês.</div>
+    </div>
+
+    <div class="card">
+      <h2>Ano a ano</h2>
+      <div class="hint">Sua inflação de dezembro a dezembro${D.anos.some(a=>a.ipca!=null)?", ao lado do IPCA cheio":""}.
+        <b>*</b> = ano incompleto.</div>
+      <div class="body" id="gBarras"></div>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--s1)"></i> Minha inflação</span>
+        ${D.anos.some(a=>a.ipca!=null)?'<span><i class="swatch" style="background:var(--s2)"></i> IPCA (IBGE)</span>':""}
+      </div>
+      <button class="toggle" id="tab-anos">Ver como tabela</button>
+      <div id="tab-anos-box" hidden>${tabelaAnos(f.anos)}</div>
+    </div>
+
+    <div class="card">
+      <h2>Quem puxou pra cima</h2>
+      <div class="hint">Ritmo anualizado de cada item — o quanto ele subiria em 12 meses nesse passo.</div>
+      <div class="body">${grafRanking(f.itens)}</div>
+    </div>
+
+    <div class="card">
+      <h2>Seus itens</h2>
+      <div class="hint">Toque numa linha pra ver o histórico de preços.</div>
+      <div class="body">${tabelaItens(f.itens)}</div>
+    </div>
+
+    <div class="card">
+      <h2>Últimos lançamentos</h2>
+      <div class="body lanc">${D.ultimos.slice(0,15).map(l=>`
+        <div class="l"><div><span class="nome">${esc(l.nome)}</span>
+          <span class="d">${dataBR(l.data)}</span></div>
+          <div class="v">${brl(l.valor)}${l.unidade?`<span class="un">/${esc(l.unidade)}</span>`:""}</div></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="foot">
+      Anote pelo Telegram: <code>gasolina 6,29 o litro</code> · <code>aluguel 3200 em 10/01/2026</code> ·
+      <code>plano de saúde 890 o mês peso 5</code>.<br>
+      Comandos: <code>/itens</code> <code>/ano</code> <code>/item gasolina</code> <code>/desfazer</code> <code>/ajuda</code>.<br>
+      Peso = quanto o item pesa na média (1 é o padrão). Atualizado em ${dataBR(D.gerado_em.slice(0,10))} às ${D.gerado_em.slice(11,16)}.
+    </div>`;
+
+  desenhaGraficos(f);
+  ligaEventos(f);
+}
+
+// mede o container e desenha em px reais (e redesenha ao girar o celular)
+function desenhaGraficos(f){
+  const c1 = document.getElementById("gLinha");
+  if(c1) c1.innerHTML = grafLinha(f.indice.meses, f.indice.indice, Math.max(260, c1.clientWidth));
+  const c2 = document.getElementById("gBarras");
+  if(c2) c2.innerHTML = grafBarras(f.anos, Math.max(260, c2.clientWidth));
+}
+let tRedesenha;
+addEventListener("resize", ()=>{ clearTimeout(tRedesenha);
+  tRedesenha = setTimeout(()=>{ const f=fonte(); desenhaGraficos(f); ligaEventos(f); }, 160); });
+
+function janela12v(idx){
+  const m=idx.meses; if(m.length<13) return null;
+  const fim=m.length-1, ini=m.indexOf(addMes(m[fim],-12));
+  return ini<0?null:(idx.indice[fim]/idx.indice[ini]-1)*100;
+}
+function janela12(idx){ const v=janela12v(idx); return v==null?"—":pct(v,2); }
+function addMes(ym,n){ const y=+ym.slice(0,4),mo=+ym.slice(5,7); const t=y*12+(mo-1)+n;
+  return String(Math.floor(t/12)).padStart(4,"0")+"-"+String(t%12+1).padStart(2,"0"); }
+function desdeV(idx){ return idx.indice.length>1 ? (idx.indice[idx.indice.length-1]/idx.indice[0]-1)*100 : null; }
+function pctDesde(idx){ const v=desdeV(idx); return v==null?"—":pct(v,2); }
+function topoV(itens,dir){
+  const l=itens.filter(i=>i.var_anualizada!=null).sort((a,b)=>(b.var_anualizada-a.var_anualizada)*dir);
+  return l.length?l[0].var_anualizada:null;
+}
+function topo(itens,dir){ const v=topoV(itens,dir); return v==null?"—":pct(v); }
+function topoNome(itens,dir){
+  const l=itens.filter(i=>i.var_anualizada!=null).sort((a,b)=>(b.var_anualizada-a.var_anualizada)*dir);
+  return l.length?esc(l[0].nome)+" · ao ano":"aguardando 2ª medição";
+}
+
+function tabelaAnos(anos){
+  return `<table><thead><tr><th>Ano</th><th>Minha</th><th>IPCA</th><th>Diferença</th></tr></thead><tbody>${
+    anos.map(a=>`<tr><td>${a.ano}${a.parcial?"*":""}</td>
+      <td class="${cls(a.var)}">${pct(a.var,2)}</td>
+      <td>${a.ipca!=null?a.ipca.toFixed(2).replace(".",",")+"%":"—"}</td>
+      <td>${a.ipca!=null?((a.var-a.ipca)>=0?"+":"")+(a.var-a.ipca).toFixed(1).replace(".",",")+" p.p.":"—"}</td></tr>`).join("")
+  }</tbody></table>`;
+}
+
+function tabelaItens(itens){
+  const ord=[...itens].sort((a,b)=>(b.var_anualizada??-1e9)-(a.var_anualizada??-1e9));
+  return `<table><thead><tr><th>Item</th><th>Último preço</th><th class="so-largo">No ano</th><th>Ao ano</th></tr></thead><tbody>${
+    ord.map(i=>`
+      <tr class="rowitem" data-id="${i.id}">
+        <td><span class="nome">${esc(i.nome)}</span>${i.peso!==1?`<span class="tag">peso ${(+i.peso).toString().replace(".",",")}</span>`:""}
+          <div class="un">${esc(i.categoria)} · ${i.n} medi${i.n>1?"ções":"ção"}</div></td>
+        <td class="nw">${brl(i.ultimo.valor)}${i.unidade?`<span class="un">/${esc(i.unidade)}</span>`:""}
+          <div class="un">${dataBR(i.ultimo.data)}</div></td>
+        <td class="so-largo ${cls(i.var_ano)}">${pct(i.var_ano)}</td>
+        <td class="nw ${cls(i.var_anualizada)}">${pct(i.var_anualizada)}
+          <div class="un so-estreito">no ano ${pct(i.var_ano)}</div></td>
+      </tr>
+      <tr class="det" id="det-${i.id}" hidden><td colspan="4">
+        <div class="h"><span>Primeiro: <b>${brl(i.primeiro.valor)}</b> em ${dataBR(i.primeiro.data)}</span>
+          <span>Agora: <b>${brl(i.ultimo.valor)}</b></span>
+          <span>Total: <b class="${cls(i.var_total)}">${pct(i.var_total)}</b> em ${i.dias} dias</span></div>
+        ${sparkline(i.serie)}
+        <ul>${i.serie.map(p=>`<li>${dataBR(p.d)} — ${brl(p.v)}</li>`).join("")}</ul>
+      </td></tr>`).join("")
+  }</tbody></table>`;
+}
+
+function ligaEventos(f){
+  document.querySelectorAll("#chips .chip").forEach(b=>{
+    b.onclick = () => { filtro = b.dataset.f; render(); };
+  });
+  document.querySelectorAll(".rowitem").forEach(r=>{
+    r.onclick = () => { const d=document.getElementById("det-"+r.dataset.id); if(d) d.hidden=!d.hidden; };
+  });
+  const t=document.getElementById("tab-anos"), box=document.getElementById("tab-anos-box");
+  if(t) t.onclick = () => { box.hidden=!box.hidden; t.textContent = box.hidden?"Ver como tabela":"Esconder tabela"; };
+
+  const hits=document.getElementById("hits"), ro=document.getElementById("ro"), cross=document.getElementById("cross");
+  if(!hits) return;
+  const mostra = i => {
+    const m=f.indice.meses[i], v=f.indice.indice[i], det=f.indice.detalhe[m];
+    const base=f.indice.indice[0];
+    const x = +hits.children[i].getAttribute("x") + (+hits.children[i].getAttribute("width"))/2;
+    cross.setAttribute("x1",x); cross.setAttribute("x2",x); cross.setAttribute("opacity","1");
+    let txt = `<b>${rotMes(m)}</b> · índice <b>${v.toFixed(1).replace(".",",")}</b>
+      (${pct((v/base-1)*100,1)} desde o início)`;
+    if(det){
+      const nomes = det.itens.map(c=>{
+        const it=D.itens.find(x=>x.id===c.item);
+        return `${it?esc(it.nome):"item"} ${pct(c.var*100)}`;
+      });
+      txt += `<br>Mês com medição: <b>${pct(det.var*100)}</b> — ${nomes.join(" · ")}`;
+    } else {
+      txt += `<br><span style="opacity:.75">Nenhum item foi remedido nesse mês.</span>`;
+    }
+    ro.innerHTML = txt;
+  };
+  [...hits.children].forEach(h=>{
+    const i=+h.dataset.i;
+    h.addEventListener("mouseenter", ()=>mostra(i));
+    h.addEventListener("touchstart", e=>{ mostra(i); }, {passive:true});
+  });
+  hits.addEventListener("mouseleave", ()=>{ cross.setAttribute("opacity","0");
+    ro.textContent="Passe o dedo sobre a linha pra ver mês a mês."; });
+}
+
+render();
+</script>
+</body>
+</html>

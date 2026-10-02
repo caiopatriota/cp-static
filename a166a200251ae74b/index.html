@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Saúde Roberto">
+<link rel="apple-touch-icon" sizes="180x180" href="saude-icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="saude-icon-192.png">
+<title>Saúde Roberto</title>
+<style>
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --ink:#0f172a; --ink2:#475569; --ink3:#94a3b8;
+  --line:#e2e8f0; --shadow:0 1px 3px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
+  --ok:#16a34a; --okbg:#dcfce7; --warn:#d97706; --warnbg:#fef3c7;
+  --bad:#dc2626; --badbg:#fee2e2; --info:#2563eb; --infobg:#dbeafe;
+  --accent:#0ea5e9; --na:#64748b; --nabg:#f1f5f9;
+  --c1:#dc2626; --c2:#7c3aed; --c3:#d97706; --c4:#16a34a;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b1220; --card:#121a2b; --ink:#e8eefc; --ink2:#9fb0cc; --ink3:#64748b;
+    --line:#22304a; --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    --okbg:#0d3320; --warnbg:#3b2a07; --badbg:#3d1414; --infobg:#0e2647; --nabg:#1c2638;
+    --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa; --na:#94a3b8;
+    --c1:#f87171; --c2:#a78bfa; --c3:#fbbf24; --c4:#4ade80;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  padding:env(safe-area-inset-top) 0 calc(48px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+.wrap{max-width:860px;margin:0 auto;
+  padding-left:calc(16px + env(safe-area-inset-left));
+  padding-right:calc(16px + env(safe-area-inset-right))}
+
+header{padding:28px 0 18px}
+h1{margin:0;font-size:30px;letter-spacing:-.02em;font-weight:800}
+.sub{color:var(--ink2);font-size:14px;margin-top:6px}
+.who{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:5px 11px;font-size:12px;color:var(--ink2);box-shadow:var(--shadow)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
+  margin:26px 0 10px;font-weight:700}
+h3{font-size:15px;margin:0 0 12px;font-weight:700}
+
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px 12px;text-align:center;box-shadow:var(--shadow)}
+.kpi .n{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.kpi .l{font-size:11px;color:var(--ink2);margin-top:4px;line-height:1.25}
+.kpi.g .n{color:var(--ok)} .kpi.y .n{color:var(--warn)}
+
+.alert{border-radius:14px;padding:14px 16px;margin:10px 0;border:1px solid transparent}
+.alert .t{font-weight:700;font-size:15px;margin-bottom:4px}
+.alert p{margin:0;font-size:14px;line-height:1.55}
+.alert.r{background:var(--badbg);border-color:color-mix(in srgb,var(--bad) 35%,transparent)}
+.alert.w{background:var(--warnbg);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.alert.i{background:var(--infobg);border-color:color-mix(in srgb,var(--info) 30%,transparent)}
+.alert.o{background:var(--okbg);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+
+.row{padding:13px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.row:first-child{padding-top:0}
+.rt{display:flex;align-items:baseline;gap:8px}
+.name{font-size:14px;font-weight:600;flex:1;min-width:0}
+.val{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.unit{font-size:11px;color:var(--ink3);font-weight:600}
+.ref{font-size:11px;color:var(--ink3);margin-top:3px;font-variant-numeric:tabular-nums}
+.tag{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.03em;white-space:nowrap}
+.tag.ok{background:var(--okbg);color:var(--ok)}
+.tag.hi{background:var(--badbg);color:var(--bad)}
+.tag.lo{background:var(--infobg);color:var(--info)}
+.tag.at{background:var(--warnbg);color:var(--warn)}
+.tag.na{background:var(--nabg);color:var(--na)}
+
+.bar{position:relative;height:6px;border-radius:99px;margin-top:9px;
+  background:linear-gradient(90deg,var(--infobg) 0 12%,var(--okbg) 12% 88%,var(--badbg) 88% 100%)}
+.bar.up{background:linear-gradient(90deg,var(--okbg) 0 85%,var(--badbg) 85% 100%)}
+.bar i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;
+  background:var(--ink);border:2px solid var(--card);transform:translateX(-50%)}
+.bar i.hi{background:var(--bad)} .bar i.lo{background:var(--info)} .bar i.ok{background:var(--ok)} .bar i.at{background:var(--warn)}
+
+.hist{margin-top:8px;font-size:11px;color:var(--ink3);display:flex;gap:4px 10px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.hist b{color:var(--ink2);font-weight:700}
+.spark{width:100%;height:38px;display:block;margin-top:8px;overflow:visible}
+
+.chart{width:100%;height:260px;display:block;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+
+table.dl{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+table.dl th{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);text-align:right;font-weight:700;padding:0 0 8px}
+table.dl th:first-child{text-align:left}
+table.dl td{padding:8px 0;border-top:1px solid var(--line);text-align:right;white-space:nowrap}
+table.dl td:first-child{text-align:left;white-space:normal;font-weight:600;padding-right:8px}
+table.dl .u{color:var(--bad);font-weight:800} table.dl .d{color:var(--info);font-weight:800}
+
+ol.ins{margin:0;padding-left:20px}
+ol.ins li{margin:0 0 14px;font-size:14px;line-height:1.6}
+ol.ins li:last-child{margin-bottom:0}
+ul.next{margin:0;padding-left:20px}
+ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
+
+.foot{font-size:11px;color:var(--ink3);line-height:1.6;text-align:center;margin-top:26px}
+.disc{background:var(--card);border:1px dashed var(--line);border-radius:12px;
+  padding:12px 14px;font-size:12px;color:var(--ink2);line-height:1.55;margin-top:14px}
+@media(max-width:400px){ .kpi .n{font-size:22px} h1{font-size:26px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Saúde Roberto</h1>
+  <div class="sub">Painel de exames · última coleta <b>30/09/2026</b> · série desde 2023</div>
+  <div class="who">
+    <span class="chip">Roberto</span>
+    <span class="chip">66 anos</span>
+    <span class="chip">LANAC</span>
+    <span class="chip">6 coletas comparadas</span>
+  </div>
+</header>
+
+<div id="kpis" class="kpis"></div>
+
+<h2>Pontos de atenção</h2>
+<div class="alert r">
+  <div class="t">🔴 Tireoide: TSH baixo de novo (0,289), pela 3ª vez em 5 exames</div>
+  <p>O TSH ficou abaixo do piso de 0,34 em jan/2024 (0,328), jun/2025 (0,225) e agora (<b>0,289</b>). O <b>T4 livre 0,63</b> mora no fundo da faixa desde 2019 e o <b>T3 livre 3,96</b> passou um pouco do teto (3,90). Esse trio junto não é o desenho comum e pede avaliação de um endocrinologista. Aos 66 anos, TSH baixo persistente importa por causa do ritmo do coração e dos ossos.</p>
+</div>
+<div class="alert w">
+  <div class="t">⚠️ Glicose 102,7 e glicada 5,9%: pré-diabetes estável há 3 anos</div>
+  <p>A <b>hemoglobina glicada</b> foi 6,0 → 6,1 → 6,1 → <b>5,9</b> desde 2023, sempre na faixa de pré-diabetes (5,7 a 6,4) e sem piorar. A <b>glicose em jejum 102,7</b> passou do limite de 99. A insulina é baixa (7,4) e o anti-GAD veio negativo. O <b>teste de tolerância à glicose (curva)</b> ainda não ficou pronto.</p>
+</div>
+<div class="alert w">
+  <div class="t">⚠️ CEA 4,25 e ferritina 342,5 acima da faixa</div>
+  <p>O <b>CEA</b> ficou acima do limite de não fumante (3) e dentro do limite de fumante (5). É a primeira medida, então ainda não há tendência: vale repetir. A <b>ferritina 342,5</b> passou pouco do teto (336,2) e o laboratório repetiu e confirmou. Com ferro normal e inflamação baixa, costuma acompanhar a glicose alta, não excesso de ferro.</p>
+</div>
+<div class="alert i">
+  <div class="t">ℹ️ Desvios pequenos, sem peso isolado</div>
+  <p><b>Colesterol total 203</b> e <b>LDL 121</b> estão pouco acima do desejável, mas melhores que em janeiro. <b>Creatinina 0,78</b> ficou abaixo do piso do laboratório (0,81), o que não indica doença do rim: a filtração está acima de 90. <b>CHCM 35,5</b> (teto 34,5) é variação de laboratório.</p>
+</div>
+<div class="alert o">
+  <div class="t">✅ Triglicerídeos caíram 43%; fígado, rim, próstata e sangue normais</div>
+  <p>Os triglicerídeos saíram de 263 para <b>150</b>, o menor valor da série, e o HDL subiu para <b>48,3</b>, o maior. Fígado, rim, hemograma, PSA (0,63), testosterona, vitaminas D e B12, cálcio e PTH estão normais. A inflamação está baixa (PCR 0,93).</p>
+</div>
+
+<h2>Evolução — perfil lipídico (mg/dL)</h2>
+<div class="card">
+  <svg id="lipchart" class="chart" aria-label="Evolução do perfil lipídico"></svg>
+  <div class="legend" id="liplegend"></div>
+  <div class="ref" style="margin-top:10px">Linha tracejada = colesterol total desejável (&lt;190). Os triglicerídeos (laranja) chegaram ao limite de 150 pela primeira vez na série.</div>
+</div>
+
+<h2>O que mudou vs. o exame anterior (28/01/2026)</h2>
+<div class="card">
+  <table class="dl" id="delta"></table>
+  <div class="ref" style="margin-top:10px">Parâmetros com medida anterior, ordenados pela maior variação. Em vermelho = subiu, azul = caiu.</div>
+</div>
+
+<div id="panels"></div>
+
+<h2>O que os dados dizem</h2>
+<div class="card">
+  <ol class="ins">
+    <li><b>A tireoide é o ponto principal deste exame.</b> O TSH oscila em torno do piso há 3 anos: 0,434, 0,328, 0,225, 0,622 e agora 0,289. Quando a tireoide produz hormônio demais, o esperado é TSH baixo com T4 alto. Aqui o T4 livre é baixo-normal (0,59 a 0,70 desde 2019) e só o T3 livre está no teto. Esse desenho tem poucas explicações, e todas pedem um médico: uso de hormônio tireoidiano ou de fórmula manipulada com T3, um nódulo que produz mais T3, ou uma causa na hipófise. Vale conferir também se ele toma <b>biotina</b> (comum em suplementos para cabelo e unha), que distorce esse tipo de exame.</li>
+    <li><b>O pré-diabetes existe, mas está parado.</b> Quatro glicadas em 3 anos ficaram entre 5,9 e 6,1, sem subir. O exame atual foi desenhado para investigar a causa: insulina 7,4 e HOMA-IR 1,7 mostram que <b>não há resistência à insulina importante</b>, o anti-GAD negativo afasta diabetes autoimune e o peptídeo C 3,23 mostra que o pâncreas produz insulina. O HOMA-beta 75 ficou abaixo da referência do laudo, o que sugere que o pâncreas responde um pouco menos do que deveria. A curva glicêmica, ainda pendente, fecha essa pergunta.</li>
+    <li><b>Os triglicerídeos tiveram a melhor leitura da série.</b> Foram 240, 255, 195, 263 e agora 150, queda de 43% em 8 meses. O HDL subiu de 41,9 para 48,3, também o melhor valor. Alguma coisa mudou entre janeiro e setembro (alimentação, álcool, peso, exercício ou remédio), e vale saber o que foi para manter.</li>
+    <li><b>O LDL de 121 depende da meta.</b> Ele ficou entre 111 e 129 nos últimos 4 exames, longe do 155 de 2023. Para risco baixo, a meta é abaixo de 115. Com 66 anos e pré-diabetes, o médico costuma classificar o risco como intermediário, e a meta passa a ser abaixo de 100. Os índices de Castelli (4,20 e 2,50) estão na faixa de risco baixo.</li>
+    <li><b>A ferritina alta parece metabólica.</b> O ferro (125,6) está normal e a PCR (0,93) afasta inflamação. Nesse cenário, ferritina pouco acima do teto costuma andar junto com glicose alta, gordura no fígado ou álcool. O fígado está limpo nos exames (TGO 19, TGP 17, GGT 27). Falta a <b>saturação de transferrina</b> para descartar excesso de ferro de verdade.</li>
+    <li><b>O CEA precisa de uma segunda medida.</b> O valor de 4,25 é a primeira dosagem, então não dá para dizer se sobe ou se sempre foi assim. Fumo é a causa mais comum de CEA entre 3 e 5, e inflamações benignas também elevam. Esse marcador não serve para diagnóstico isolado. O que resolve é repetir em 2 a 3 meses e conferir se a colonoscopia está em dia. O CA 19-9 (0,9) está muito baixo.</li>
+    <li><b>O rim está bem.</b> A ureia caiu para 37,8 e entrou na faixa, depois de 4 exames acima de 43. A filtração está acima de 90, a melhor categoria. A creatinina 0,78 abaixo do piso costuma refletir boa hidratação ou menos massa muscular, e não doença.</li>
+    <li><b>O fígado melhorou em todos os marcadores.</b> TGP caiu de 28 para 17, TGO de 25 para 19 e a GGT de 41 para 27. Isso combina com a queda dos triglicerídeos.</li>
+    <li><b>A próstata está tranquila.</b> O PSA total foi 0,87, 0,69, 0,85 e agora 0,63, sempre abaixo de 1 (limite 4). A fração livre é de 25%.</li>
+    <li><b>Os hormônios masculinos estão normais para a idade.</b> A testosterona total (375) está estável desde janeiro (368) e LH e FSH estão normais, então o eixo funciona. O DHEA-S (66) e o cortisol da manhã (7,2, piso 6,02) estão na parte baixa da faixa. Sozinhos não significam nada, mas somados ao T4 baixo-normal reforçam a conversa com o endocrinologista.</li>
+    <li><b>Vitaminas e minerais em ordem.</b> A vitamina D foi de 19,1 (2020, deficiência) para 50,5, dentro do ideal para a idade. Cálcio (9,35) e PTH (33,1) estão normais, B12 e ácido fólico estão bons. O magnésio (1,9) está perto do piso (1,8). O ácido úrico cai há 3 anos: 6,1, 5,6, 5,2 e 4,8.</li>
+  </ol>
+</div>
+
+<h2>Sugestão de próximos passos</h2>
+<div class="card">
+  <ul class="next">
+    <li><b>Levar a série de TSH, T4 livre e T3 livre a um endocrinologista.</b> Contar todos os remédios, fórmulas manipuladas e suplementos (principalmente biotina). É comum o médico pedir TRAb, anticorpos e ultrassom da tireoide.</li>
+    <li><b>Buscar o resultado da curva glicêmica (TOTG)</b> e da vitamina C, que ainda não ficaram prontos.</li>
+    <li><b>Repetir o CEA em 2 a 3 meses</b>, no mesmo laboratório, e conferir a data da última colonoscopia.</li>
+    <li><b>Saturação de transferrina</b> junto da ferritina no próximo exame.</li>
+    <li><b>Lipoproteína(a)</b>: medida uma vez na vida, ajuda a definir a meta de LDL.</li>
+    <li>Com TSH baixo persistente aos 66 anos, o médico pode avaliar <b>eletrocardiograma</b> e <b>densitometria óssea</b>.</li>
+  </ul>
+</div>
+
+<div class="disc">
+  <b>Aviso.</b> Este painel apenas organiza e visualiza os números dos laudos. Não é diagnóstico nem substitui avaliação médica. As hipóteses acima são leituras do padrão dos números e precisam ser confirmadas com o paciente e o médico. Toda decisão é do médico.
+</div>
+
+<div class="foot">
+  Fonte: LANAC Laboratório de Análises Clínicas. Coleta em 30/09/2026, emissão em 02/10/2026 (27 páginas).<br>
+  Comparativos do laudo: 28/01/2026 · 07/06/2025 · 10/07/2024 · 24/01/2024 · 06/09/2023 (e tireoide/vitamina D de 2019–2020).<br>
+  Não prontos na emissão: vitamina C e teste oral de tolerância à glicose.
+</div>
+
+</div>
+
+<script>
+/* ---------- dados ----------
+   Cada item: n (nome), u (unidade), lo/hi (faixa), s = série [[data, valor], ...] com a coleta
+   ATUAL por último. Para um exame novo: acrescentar [data, valor] no fim de cada "s" e trocar
+   CUR e PREV. O render recalcula status, KPIs, barras, sparklines, tabela de variação e gráfico. */
+const CUR = "30/09/2026", PREV = "28/01/2026";
+
+const PANELS = [
+{
+  titulo:"Tireoide e paratireoide", sub:"Soro · quimioluminescência",
+  grupos:[{nome:null, itens:[
+    {n:"TSH ultrassensível", u:"µUI/mL", lo:0.34, hi:5.6,
+     s:[["06/09/2023",0.434],["24/01/2024",0.328],["07/06/2025",0.225],["28/01/2026",0.622],[CUR,0.289]]},
+    {n:"T4 livre", u:"ng/dL", lo:0.54, hi:1.24, obs:"dentro da faixa, mas sempre no terço inferior",
+     s:[["09/08/2019",0.59],["01/02/2020",0.63],["28/01/2026",0.70],[CUR,0.63]]},
+    {n:"T3 livre", u:"pg/mL", lo:2.5, hi:3.9, s:[["07/06/2025",3.78],[CUR,3.96]]},
+    {n:"PTH intacto", u:"pg/mL", lo:12, hi:88, s:[[CUR,33.1]]}
+  ]}]
+},
+{
+  titulo:"Glicose e insulina", sub:"Plasma com fluoreto · soro · sangue total (eletroforese capilar)",
+  grupos:[{nome:null, itens:[
+    {n:"Glicose em jejum", u:"mg/dL", lo:60, hi:99, s:[[CUR,102.7]]},
+    {n:"Hemoglobina glicada (HbA1c)", u:"%", hi:5.6, force:"at", tagtxt:"PRÉ-DIABETES",
+     ref:"normal < 5,7 · pré-diabetes 5,7–6,4 · diabetes > 6,4",
+     s:[["06/09/2023",6.0],["24/01/2024",6.1],["10/07/2024",6.1],[CUR,5.9]]},
+    {n:"Glicemia média estimada", u:"mg/dL", force:"na", tagtxt:"CALCULADA", s:[[CUR,122]]},
+    {n:"Insulina em jejum", u:"mUI/mL", lo:1.9, hi:23, s:[[CUR,7.4]]},
+    {n:"HOMA-IR", u:"", lo:0.4, hi:2.9, ref:"0,4 – 2,9 (IMC até 25) · até 4,3 (IMC 25–30)", s:[[CUR,1.7]]},
+    {n:"HOMA-beta", u:"", force:"at", tagtxt:"ABAIXO DA REF.", ref:"167 – 175 (faixa do laudo)", s:[[CUR,75]]},
+    {n:"Peptídeo C", u:"ng/mL", lo:0.9, hi:7.1, s:[[CUR,3.23]]},
+    {n:"Anti-GAD", txt:"< 5 UI/mL", force:"ok", tagtxt:"NEGATIVO", ref:"negativo: inferior a 10 UI/mL"},
+    {n:"Teste oral de tolerância à glicose", txt:"pendente", force:"na", tagtxt:"NÃO PRONTO"}
+  ]}]
+},
+{
+  titulo:"Perfil lipídico", sub:"Soro · colorimétrico/enzimático · Diretriz Brasileira de Dislipidemias 2025",
+  grupos:[{nome:null, itens:[
+    {n:"Colesterol total", u:"mg/dL", hi:190, ref:"desejável < 190",
+     s:[["06/09/2023",233],["24/01/2024",197],["07/06/2025",187],["28/01/2026",218],[CUR,203]]},
+    {n:"LDL colesterol", u:"mg/dL", hi:115, ref:"meta < 115 (risco baixo) · < 100 intermediário · < 70 alto",
+     s:[["06/09/2023",155],["24/01/2024",111],["07/06/2025",113],["28/01/2026",128.98],[CUR,121]]},
+    {n:"HDL colesterol", u:"mg/dL", lo:40, ref:"desejável > 40",
+     s:[["06/09/2023",44.6],["24/01/2024",43.1],["07/06/2025",43.4],["28/01/2026",41.9],[CUR,48.3]]},
+    {n:"Triglicerídeos", u:"mg/dL", hi:150, force:"at", tagtxt:"NO LIMITE", ref:"desejável < 150 em jejum",
+     s:[["06/09/2023",240],["24/01/2024",255],["07/06/2025",195],["28/01/2026",263],[CUR,150]]},
+    {n:"Colesterol não-HDL", u:"mg/dL", hi:160, ref:"meta < 160 (risco baixo) · < 130 intermediário",
+     s:[[CUR,154.7]]},
+    {n:"VLDL", u:"mg/dL", force:"na", tagtxt:"SEM REF.", s:[[CUR,30]]},
+    {n:"Lipídeos totais", u:"mg/dL", lo:400, hi:800, s:[[CUR,640]]},
+    {n:"Índice de Castelli I", u:"CT/HDL", hi:4.96, tagtxt:"RISCO BAIXO",
+     ref:"homem: até 4,96 baixo · 4,97–9,54 médio", s:[[CUR,4.20]]},
+    {n:"Índice de Castelli II", u:"LDL/HDL", hi:3.64, tagtxt:"RISCO BAIXO",
+     ref:"homem: 1,0–3,64 baixo · 3,65–6,24 médio", s:[[CUR,2.50]]},
+    {n:"PCR ultrassensível", u:"mg/L", hi:1, tagtxt:"RISCO BAIXO",
+     ref:"risco vascular: < 1 baixo · 1–3 moderado · > 3 alto", s:[[CUR,0.93]]}
+  ]}]
+},
+{
+  titulo:"Função renal e ácido úrico", sub:"Soro",
+  grupos:[{nome:null, itens:[
+    {n:"Ureia", u:"mg/dL", lo:17, hi:43,
+     s:[["06/09/2023",46.8],["24/01/2024",42.5],["10/07/2024",44.3],["07/06/2025",48.8],["28/01/2026",45.5],[CUR,37.8]]},
+    {n:"Creatinina", u:"mg/dL", lo:0.81, hi:1.44,
+     s:[["06/09/2023",0.92],["24/01/2024",0.88],["10/07/2024",0.97],["07/06/2025",0.82],["28/01/2026",0.97],[CUR,0.78]]},
+    {n:"Filtração glomerular (eGFR)", txt:"> 90 mL/min/1,73m²", force:"ok", tagtxt:"G1 · NORMAL",
+     ref:"CKD-EPI 2021 · > 90 G1 · 60–89 G2"},
+    {n:"Ácido úrico", u:"mg/dL", lo:3.5, hi:7.2,
+     s:[["06/09/2023",6.1],["24/01/2024",5.6],["07/06/2025",5.2],[CUR,4.8]]}
+  ]}]
+},
+{
+  titulo:"Fígado", sub:"Soro · cinético U.V. / enzimático",
+  grupos:[{nome:null, itens:[
+    {n:"TGO / AST", u:"U/L", hi:50, s:[["06/09/2023",20],["24/01/2024",28],["07/06/2025",18],["28/01/2026",25],[CUR,19]]},
+    {n:"TGP / ALT", u:"U/L", hi:50, s:[["06/09/2023",24],["24/01/2024",34],["07/06/2025",24],["28/01/2026",28],[CUR,17]]},
+    {n:"Gama GT", u:"U/L", hi:55, s:[["28/01/2026",41],[CUR,27]]},
+    {n:"Fosfatase alcalina", u:"U/L", lo:43, hi:115, s:[[CUR,82]]}
+  ]}]
+},
+{
+  titulo:"Ferro, vitaminas e minerais", sub:"Soro",
+  grupos:[{nome:null, itens:[
+    {n:"Ferritina", u:"ng/mL", lo:23.9, hi:336.2, obs:"exame repetido e confirmado pelo laboratório", s:[[CUR,342.5]]},
+    {n:"Ferro sérico", u:"µg/dL", lo:70, hi:180, s:[[CUR,125.6]]},
+    {n:"Vitamina D (25-OH)", u:"ng/mL", lo:30, hi:60,
+     ref:"ideal 30–60 (≥65 anos / risco) · normal 20–60 · toxicidade > 100",
+     s:[["01/02/2020",19.1],[CUR,50.5]]},
+    {n:"Vitamina B12", u:"pg/mL", lo:180, hi:914, s:[[CUR,570]]},
+    {n:"Ácido fólico", txt:"> 22,4 ng/mL", force:"ok", ref:"superior a 3,1 ng/mL"},
+    {n:"Cálcio", u:"mg/dL", lo:8.6, hi:10.3, s:[[CUR,9.35]]},
+    {n:"Magnésio", u:"mg/dL", lo:1.8, hi:2.6, s:[[CUR,1.9]]},
+    {n:"Vitamina C", txt:"pendente", force:"na", tagtxt:"NÃO PRONTO"}
+  ]}]
+},
+{
+  titulo:"Hormônios", sub:"Soro · quimioluminescência (DHT por ELISA)",
+  grupos:[{nome:null, itens:[
+    {n:"Testosterona total", u:"ng/dL", lo:175, hi:781, s:[["28/01/2026",368.19],[CUR,374.59]]},
+    {n:"Testosterona livre", u:"ng/dL", lo:1.86, hi:19.0, ref:"61 a 90 anos: 1,86 – 19,0", s:[[CUR,5.95]]},
+    {n:"Testosterona biodisponível", u:"ng/dL", lo:43, hi:424, ref:"61 a 90 anos: 43 – 424", s:[[CUR,139.72]]},
+    {n:"SHBG", u:"nmol/L", force:"na", tagtxt:"SEM REF.", s:[[CUR,47.8]]},
+    {n:"DHT (di-hidrotestosterona)", u:"pg/mL", lo:143, hi:842, s:[[CUR,279]]},
+    {n:"Estradiol", u:"pg/mL", hi:47, s:[[CUR,16.7]]},
+    {n:"LH", u:"mUI/mL", lo:1.24, hi:8.62, s:[[CUR,3.81]]},
+    {n:"FSH", u:"mUI/mL", lo:1.7, hi:19.26, s:[[CUR,6.49]]},
+    {n:"DHEA-S", u:"µg/dL", lo:24, hi:244, ref:"61 a 70 anos: 24 – 244", s:[[CUR,66]]},
+    {n:"Cortisol (manhã)", u:"µg/dL", lo:6.02, hi:18.4, ref:"coleta entre 6 e 10 h: 6,02 – 18,4", s:[[CUR,7.2]]}
+  ]}]
+},
+{
+  titulo:"Próstata e marcadores tumorais", sub:"Soro · quimioluminescência · não servem para diagnóstico isolado",
+  grupos:[{nome:null, itens:[
+    {n:"PSA total", u:"ng/mL", lo:0.1, hi:4,
+     s:[["10/07/2024",0.87],["07/06/2025",0.69],["28/01/2026",0.85],[CUR,0.63]]},
+    {n:"PSA livre", u:"ng/mL", force:"na", tagtxt:"SEM REF.",
+     s:[["10/07/2024",0.26],["28/01/2026",0.23],[CUR,0.16]]},
+    {n:"Relação PSA livre / total", txt:"25%", force:"ok",
+     ref:"calculada (o laudo não reporta com PSA total abaixo de 4)"},
+    {n:"CEA", u:"ng/mL", hi:3, ref:"não fumantes até 3 · fumantes até 5", s:[[CUR,4.25]]},
+    {n:"CA 19-9", u:"U/mL", hi:35, s:[[CUR,0.9]]}
+  ]}]
+},
+{
+  titulo:"Hemograma", sub:"Sangue total com EDTA · automatizado",
+  grupos:[
+   {nome:"Eritrograma", itens:[
+     {n:"Hematócrito",  u:"%",          lo:40,   hi:50,   s:[[CUR,42.9]]},
+     {n:"Hemoglobina",  u:"g/dL",       lo:13,   hi:17,   s:[[CUR,15.2]]},
+     {n:"Hemácias",     u:"milhões/µL", lo:4.5,  hi:5.5,  s:[[CUR,4.93]]},
+     {n:"V.C.M.",       u:"fL",         lo:83,   hi:101,  s:[[CUR,87]]},
+     {n:"H.C.M.",       u:"pg",         lo:27,   hi:32,   s:[[CUR,30.9]]},
+     {n:"C.H.C.M.",     u:"%",          lo:31.5, hi:34.5, s:[[CUR,35.5]]},
+     {n:"RDW",          u:"%",          lo:11.6, hi:14.0, s:[[CUR,13.0]]}
+   ]},
+   {nome:"Leucograma", itens:[
+     {n:"Leucócitos",         u:"/mm³", lo:4000, hi:10000, s:[[CUR,7500]]},
+     {n:"Neutrófilos",        u:"/mm³", lo:2000, hi:7000,  s:[[CUR,3825]], pct:"51%"},
+     {n:"Linfócitos típicos", u:"/mm³", lo:1000, hi:3000,  s:[[CUR,2925]], pct:"39%"},
+     {n:"Monócitos",          u:"/mm³", lo:200,  hi:1000,  s:[[CUR,525]],  pct:"7%"},
+     {n:"Eosinófilos",        u:"/mm³", lo:20,   hi:500,   s:[[CUR,150]],  pct:"2%"},
+     {n:"Basófilos",          u:"/mm³", lo:20,   hi:100,   s:[[CUR,75]],   pct:"1%"}
+   ]},
+   {nome:"Plaquetas", itens:[
+     {n:"Plaquetas", u:"/mm³", lo:150000, hi:400000, s:[[CUR,221000]]},
+     {n:"V.P.M.",    u:"fL",   lo:7.5,    hi:11.2,   s:[[CUR,8.6]]}
+   ]}
+  ]
+},
+{
+  titulo:"Histórico — não repetido neste exame", sub:"PCR convencional (método diferente da ultrassensível)",
+  grupos:[{nome:null, itens:[
+    {n:"Proteína C reativa", u:"mg/L", force:"na", tagtxt:"2023–24", cnt:false,
+     s:[["06/09/2023",2.9],["24/01/2024",2.8]]}
+  ]}]
+}
+];
+
+/* ---------- helpers ---------- */
+const fmt = n => {
+  if(n===undefined||n===null) return "";
+  if(Math.abs(n)>=1000) return n.toLocaleString("pt-BR");
+  return String(Math.round(n*1000)/1000).replace(".",",");
+};
+const last = it => it.s ? it.s[it.s.length-1][1] : undefined;
+const toDate = d => { const [dd,mm,yy]=d.split("/").map(Number); return new Date(yy,mm-1,dd); };
+const MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const short = d => { const x=toDate(d); return MES[x.getMonth()]+"/"+String(x.getFullYear()).slice(2); };
+
+function statusOf(it){
+  if(it.force) return it.force;
+  const v = last(it);
+  if(v===undefined) return "ok";
+  if(it.hi!==undefined && v > it.hi) return "hi";
+  if(it.lo!==undefined && v < it.lo) return "lo";
+  return "ok";
+}
+const TAGS = {ok:["ok","NORMAL"], hi:["hi","ACIMA"], lo:["lo","ABAIXO"], at:["at","ATENÇÃO"], na:["na","—"]};
+
+let counts = {ok:0, off:0, total:0};
+const SPARKS = [];
+
+function refText(it){
+  if(it.ref) return "Referência: "+it.ref+(it.u?" ("+it.u+")":"");
+  if(it.lo!==undefined && it.hi!==undefined) return "Referência "+fmt(it.lo)+" – "+fmt(it.hi)+(it.u?" "+it.u:"");
+  if(it.hi!==undefined) return "Referência < "+fmt(it.hi)+(it.u?" "+it.u:"");
+  if(it.lo!==undefined) return "Referência > "+fmt(it.lo)+(it.u?" "+it.u:"");
+  return "";
+}
+
+function renderItem(it){
+  const st = statusOf(it);
+  const [cls,label] = TAGS[st] || TAGS.ok;
+  if(it.cnt!==false && st!=="na"){ counts.total++; (st==="ok" ? counts.ok++ : counts.off++); }
+  const v = last(it);
+
+  let h = '<div class="row"><div class="rt">';
+  h += '<span class="name">'+it.n+(it.pct?' <span class="unit">'+it.pct+'</span>':'')+'</span>';
+  h += '<span class="val">'+(it.txt||fmt(v))+(it.u&&!it.txt?' <span class="unit">'+it.u+'</span>':'')+'</span>';
+  h += '<span class="tag '+cls+'">'+(it.tagtxt||label)+'</span></div>';
+  const rt = refText(it); if(rt) h += '<div class="ref">'+rt+'</div>';
+  if(it.obs) h += '<div class="ref">'+it.obs+'</div>';
+
+  if(v!==undefined && it.hi!==undefined){
+    const lo = it.lo!==undefined ? it.lo : 0;
+    const span = it.hi - lo, pad = span*0.18;
+    const min = it.lo!==undefined ? lo - pad : 0;
+    const max = it.hi + pad;
+    const p = Math.max(2, Math.min(98, ((v-min)/(max-min))*100));
+    h += '<div class="bar'+(it.lo===undefined?' up':'')+'"><i class="'+st+'" style="left:'+p.toFixed(1)+'%"></i></div>';
+  }
+  if(it.s && it.s.length>=2){
+    const id = "sp"+SPARKS.length; SPARKS.push({id, it});
+    h += '<svg class="spark" id="'+id+'" aria-hidden="true"></svg>';
+    const prev = it.s[it.s.length-2][1];
+    const d = prev ? ((v-prev)/prev)*100 : 0;
+    h += '<div class="hist">'+it.s.map(x=>'<span><b>'+short(x[0])+'</b> '+fmt(x[1])+'</span>').join('')+
+         '<span style="color:'+(Math.abs(d)<5?'var(--ink3)':d>0?'var(--bad)':'var(--info)')+'"><b>Δ</b> '+(d>0?'+':'')+d.toFixed(0)+'% vs anterior</span></div>';
+  }
+  return h + '</div>';
+}
+
+document.getElementById("panels").innerHTML = PANELS.map(p=>{
+  let h = '<h2>'+p.titulo+'</h2><div class="card">';
+  if(p.sub) h += '<div class="ref" style="margin:-4px 0 14px">'+p.sub+'</div>';
+  p.grupos.forEach((g,gi)=>{
+    if(g.nome) h += '<h3'+(gi?' style="margin-top:18px"':'')+'>'+g.nome+'</h3>';
+    h += g.itens.map(renderItem).join('');
+  });
+  return h + '</div>';
+}).join('');
+
+document.getElementById("kpis").innerHTML =
+  '<div class="kpi"><div class="n">'+counts.total+'</div><div class="l">parâmetros avaliados</div></div>' +
+  '<div class="kpi g"><div class="n">'+counts.ok+'</div><div class="l">dentro da faixa</div></div>' +
+  '<div class="kpi y"><div class="n">'+counts.off+'</div><div class="l">fora ou em atenção</div></div>';
+
+/* ---------- tabela: variação vs exame anterior ---------- */
+(function(){
+  const rows = [];
+  PANELS.forEach(p=>p.grupos.forEach(g=>g.itens.forEach(it=>{
+    if(!it.s) return;
+    const a = it.s.find(x=>x[0]===PREV), b = it.s.find(x=>x[0]===CUR);
+    if(a && b && a[1]) rows.push({n:it.n, u:it.u, a:a[1], b:b[1], d:(b[1]-a[1])/a[1]*100});
+  })));
+  rows.sort((x,y)=>Math.abs(y.d)-Math.abs(x.d));
+  document.getElementById("delta").innerHTML =
+    '<tr><th>Exame</th><th>'+short(PREV)+'</th><th>'+short(CUR)+'</th><th>Δ</th></tr>' +
+    rows.map(r=>'<tr><td>'+r.n+'</td><td>'+fmt(r.a)+'</td><td>'+fmt(r.b)+'</td><td class="'+
+      (Math.abs(r.d)<5?'':r.d>0?'u':'d')+'">'+(r.d>0?'+':'')+r.d.toFixed(0)+'%</td></tr>').join('');
+})();
+
+/* ---------- desenho (na largura real do container) ---------- */
+function drawSpark({id, it}){
+  const el = document.getElementById(id); if(!el) return;
+  const W = Math.max(200, Math.round(el.clientWidth||400)), H = 38, P = 6;
+  el.setAttribute("viewBox","0 0 "+W+" "+H);
+  const t = it.s.map(x=>toDate(x[0]).getTime()), vs = it.s.map(x=>x[1]);
+  let lo = Math.min(...vs), hi = Math.max(...vs);
+  if(it.hi!==undefined){ hi = Math.max(hi, it.hi); }
+  if(it.lo!==undefined){ lo = Math.min(lo, it.lo); }
+  const pad = (hi-lo)*0.1 || 1; lo -= pad; hi += pad;
+  const t0=t[0], t1=t[t.length-1];
+  const x = i => P + (t1===t0?0.5:(t[i]-t0)/(t1-t0))*(W-2*P);
+  const y = v => P + (1-(v-lo)/(hi-lo))*(H-2*P);
+  let s = '';
+  if(it.hi!==undefined){
+    const top = y(it.hi), bot = it.lo!==undefined ? y(it.lo) : H;
+    s += '<rect x="0" y="'+top+'" width="'+W+'" height="'+(bot-top)+'" fill="var(--okbg)" opacity=".7" rx="3"/>';
+  } else if(it.lo!==undefined){
+    s += '<rect x="0" y="0" width="'+W+'" height="'+y(it.lo)+'" fill="var(--okbg)" opacity=".7" rx="3"/>';
+  }
+  s += '<path d="'+vs.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')+
+       '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+  vs.forEach((v,i)=>{
+    const out = (it.hi!==undefined && v>it.hi) || (it.lo!==undefined && v<it.lo);
+    s += '<circle cx="'+x(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="'+(i===vs.length-1?4:3)+
+         '" fill="'+(out?'var(--bad)':'var(--ok)')+'" stroke="var(--card)" stroke-width="1.5"/>';
+  });
+  el.innerHTML = s;
+}
+
+const LIP = [["Colesterol total","var(--c1)"],["LDL colesterol","var(--c2)"],["Triglicerídeos","var(--c3)"],["HDL colesterol","var(--c4)"]];
+const findItem = n => { for(const p of PANELS) for(const g of p.grupos) for(const it of g.itens) if(it.n===n) return it; };
+document.getElementById("liplegend").innerHTML = LIP.map(([n,c])=>'<span><i style="background:'+c+'"></i>'+n.replace(" colesterol","")+'</span>').join('');
+
+function drawLip(){
+  const el = document.getElementById("lipchart");
+  const W = Math.max(290, Math.round(el.clientWidth||600)), H = 260, L = 38, R = 40, T = 16, B = 30;
+  el.setAttribute("viewBox","0 0 "+W+" "+H);
+  const series = LIP.map(([n,c])=>({n,c,s:findItem(n).s}));
+  const all = series.flatMap(x=>x.s.map(p=>toDate(p[0]).getTime()));
+  const t0 = Math.min(...all), t1 = Math.max(...all);
+  const x = d => L + (toDate(d).getTime()-t0)/(t1-t0)*(W-L-R);
+  const yMax = 350, y = v => T + (1-v/yMax)*(H-T-B);
+  let s = '';
+  [0,100,200,300].forEach(v=>{
+    s += '<line x1="'+L+'" y1="'+y(v)+'" x2="'+(W-R)+'" y2="'+y(v)+'" stroke="var(--line)"/>';
+    s += '<text x="'+(L-8)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="11" fill="var(--ink3)">'+v+'</text>';
+  });
+  s += '<line x1="'+L+'" y1="'+y(190)+'" x2="'+(W-R)+'" y2="'+y(190)+'" stroke="var(--c1)" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>';
+  s += '<text x="'+(L+4)+'" y="'+(y(190)-5)+'" font-size="10" fill="var(--c1)" font-weight="700">190</text>';
+  series[0].s.forEach(p=>{
+    s += '<text x="'+x(p[0])+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="var(--ink3)">'+short(p[0])+'</text>';
+  });
+  series.forEach(sr=>{
+    s += '<path d="'+sr.s.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+','+y(p[1]).toFixed(1)).join(' ')+
+         '" fill="none" stroke="'+sr.c+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    sr.s.forEach(p=> s += '<circle cx="'+x(p[0]).toFixed(1)+'" cy="'+y(p[1]).toFixed(1)+'" r="4" fill="'+sr.c+'" stroke="var(--card)" stroke-width="2"/>');
+    const lp = sr.s[sr.s.length-1];
+    s += '<text x="'+(x(lp[0])+8)+'" y="'+(y(lp[1])+4)+'" font-size="12" font-weight="800" fill="'+sr.c+'">'+Math.round(lp[1])+'</text>';
+  });
+  el.innerHTML = s;
+}
+
+function drawAll(){ drawLip(); SPARKS.forEach(drawSpark); }
+drawAll();
+addEventListener("resize", drawAll);
+addEventListener("orientationchange", drawAll);
+</script>
+</body>
+</html>

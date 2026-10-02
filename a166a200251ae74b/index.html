@@ -143,7 +143,7 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
 </div>
 <div class="alert w">
   <div class="t">⚠️ CEA 4,25 e ferritina 342,5 acima da faixa</div>
-  <p>O <b>CEA</b> ficou acima do limite de não fumante (3) e dentro do limite de fumante (5). É a primeira medida, então ainda não há tendência: vale repetir. A <b>ferritina 342,5</b> passou pouco do teto (336,2) e o laboratório repetiu e confirmou. Com ferro normal e inflamação baixa, costuma acompanhar a glicose alta, não excesso de ferro.</p>
+  <p>O <b>CEA</b> ficou acima do limite de não fumante (3). Ele é ex-fumante, e o limite de fumante (5) só vale para quem ainda fuma. É a primeira medida, então ainda não há tendência: vale repetir. A <b>ferritina 342,5</b> passou pouco do teto (336,2) e o laboratório repetiu e confirmou. Com ferro normal e inflamação baixa, costuma acompanhar a glicose alta, não excesso de ferro.</p>
 </div>
 <div class="alert i">
   <div class="t">ℹ️ Desvios pequenos, sem peso isolado</div>
@@ -177,7 +177,7 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
     <li><b>Os triglicerídeos tiveram a melhor leitura da série.</b> Foram 240, 255, 195, 263 e agora 150, queda de 43% em 8 meses. O HDL subiu de 41,9 para 48,3, também o melhor valor. Alguma coisa mudou entre janeiro e setembro (alimentação, álcool, peso, exercício ou remédio), e vale saber o que foi para manter.</li>
     <li><b>O LDL de 121 depende da meta.</b> Ele ficou entre 111 e 129 nos últimos 4 exames, longe do 155 de 2023. Para risco baixo, a meta é abaixo de 115. Com 66 anos e pré-diabetes, o médico costuma classificar o risco como intermediário, e a meta passa a ser abaixo de 100. Os índices de Castelli (4,20 e 2,50) estão na faixa de risco baixo.</li>
     <li><b>A ferritina alta parece metabólica.</b> O ferro (125,6) está normal e a PCR (0,93) afasta inflamação. Nesse cenário, ferritina pouco acima do teto costuma andar junto com glicose alta, gordura no fígado ou álcool. O fígado está limpo nos exames (TGO 19, TGP 17, GGT 27). Falta a <b>saturação de transferrina</b> para descartar excesso de ferro de verdade.</li>
-    <li><b>O CEA precisa de uma segunda medida.</b> O valor de 4,25 é a primeira dosagem, então não dá para dizer se sobe ou se sempre foi assim. Fumo é a causa mais comum de CEA entre 3 e 5, e inflamações benignas também elevam. Esse marcador não serve para diagnóstico isolado. O que resolve é repetir em 2 a 3 meses e conferir se a colonoscopia está em dia. O CA 19-9 (0,9) está muito baixo.</li>
+    <li><b>O CEA precisa de uma segunda medida.</b> O valor de 4,25 é a primeira dosagem, então não dá para dizer se sobe ou se sempre foi assim. Ele é ex-fumante: o cigarro eleva o CEA, mas o valor costuma voltar para perto do de não fumante depois de parar, então o fumo antigo explica menos quanto mais tempo faz. Inflamações benignas também elevam. Esse marcador não serve para diagnóstico isolado. O que resolve é repetir em 2 a 3 meses, conferir se a colonoscopia está em dia e contar ao médico o histórico de cigarro (quantos anos fumou e quando parou). O CA 19-9 (0,9) está muito baixo.</li>
     <li><b>O rim está bem.</b> A ureia caiu para 37,8 e entrou na faixa, depois de 4 exames acima de 43. A filtração está acima de 90, a melhor categoria. A creatinina 0,78 abaixo do piso costuma refletir boa hidratação ou menos massa muscular, e não doença.</li>
     <li><b>O fígado melhorou em todos os marcadores.</b> TGP caiu de 28 para 17, TGO de 25 para 19 e a GGT de 41 para 27. Isso combina com a queda dos triglicerídeos.</li>
     <li><b>A próstata está tranquila.</b> O PSA total foi 0,87, 0,69, 0,85 e agora 0,63, sempre abaixo de 1 (limite 4). A fração livre é de 25%.</li>
@@ -192,6 +192,7 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
     <li><b>Levar a série de TSH, T4 livre e T3 livre a um endocrinologista.</b> Contar todos os remédios, fórmulas manipuladas e suplementos (principalmente biotina). É comum o médico pedir TRAb, anticorpos e ultrassom da tireoide.</li>
     <li><b>Buscar o resultado da curva glicêmica (TOTG)</b> e da vitamina C, que ainda não ficaram prontos.</li>
     <li><b>Repetir o CEA em 2 a 3 meses</b>, no mesmo laboratório, e conferir a data da última colonoscopia.</li>
+    <li><b>Informar ao médico o histórico de cigarro</b> (anos de fumo, quantidade e quando parou). Conforme a carga, ex-fumantes dessa idade podem ter indicação de tomografia de tórax de baixa dose, a critério médico.</li>
     <li><b>Saturação de transferrina</b> junto da ferritina no próximo exame.</li>
     <li><b>Lipoproteína(a)</b>: medida uma vez na vida, ajuda a definir a meta de LDL.</li>
     <li>Com TSH baixo persistente aos 66 anos, o médico pode avaliar <b>eletrocardiograma</b> e <b>densitometria óssea</b>.</li>
@@ -329,7 +330,7 @@ const PANELS = [
      s:[["10/07/2024",0.26],["28/01/2026",0.23],[CUR,0.16]]},
     {n:"Relação PSA livre / total", txt:"25%", force:"ok",
      ref:"calculada (o laudo não reporta com PSA total abaixo de 4)"},
-    {n:"CEA", u:"ng/mL", hi:3, ref:"não fumantes até 3 · fumantes até 5", s:[[CUR,4.25]]},
+    {n:"CEA", u:"ng/mL", hi:3, ref:"não fumantes até 3 · fumantes até 5", obs:"ex-fumante: vale a régua de não fumante", s:[[CUR,4.25]]},
     {n:"CA 19-9", u:"U/mL", hi:35, s:[[CUR,0.9]]}
   ]}]
 },

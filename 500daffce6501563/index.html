@@ -128,7 +128,7 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
 
 <header>
   <h1>Saúde Caio</h1>
-  <div class="sub">Painel de exames · última coleta <b>11/05/2026</b></div>
+  <div class="sub">Painel de exames · última coleta <b>01/10/2026</b></div>
   <div class="who">
     <span class="chip">Caio Patriota Oyola</span>
     <span class="chip">29 anos · 02/04/1997</span>
@@ -150,30 +150,34 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
 
 <h2>Pontos de atenção</h2>
 <div class="alert w">
-  <div class="t">⚠️ Glicose em jejum 102,2 mg/dL — acima da faixa (60–99)</div>
-  <p>É o único achado que muda conduta. Subiu de <b>79,0</b> (set/2023) e <b>85,0</b> (ago/2023) para <b>102,2</b> — alta de <b>+29%</b> em ~2,7 anos, e a faixa 100–125 é o território de pré-diabetes pelos critérios da ADA. O próprio laudo sugere teste de tolerância à glicose (GTT) ou monitoramento mais criterioso.</p>
+  <div class="t">⚠️ LDL 151,67 mg/dL — acima da meta (abaixo de 115)</div>
+  <p>É o achado que mais pesa nesta coleta. Contra ago/2023: <b>LDL 111 → 151,67</b> (+37%), <b>colesterol total 177 → 218,27</b> (+23%, desejável abaixo de 190) e <b>HDL 67 → 55,39</b> (−17%). O não-HDL (162,88) passou por pouco da meta de 160. Com <b>histórico familiar de colesterol alto</b>, a meta de LDL que vale para você é decisão do médico — e pode ser mais apertada que 115.</p>
+</div>
+<div class="alert w">
+  <div class="t">⚠️ Gama GT 71,65 U/L — acima da faixa (inferior a 55)</div>
+  <p>Primeira medida de GGT, então não há tendência — mas ela veio junto com a <b>TGP dobrando</b> (22 → 46, a 4 pontos do teto de 50) e a <b>TGO subindo</b> (15 → 26). É o fígado pedindo um segundo olhar: repetir as enzimas e, a critério médico, ultrassom de abdome.</p>
 </div>
 <div class="alert i">
-  <div class="t">ℹ️ Dois desvios sem peso clínico isolado</div>
-  <p><b>CHCM 35,0</b> (ref. 31,5–34,5) e <b>linfócitos 3.079/mm³</b> (ref. até 3.000) estão a um fio da borda, com todo o resto do hemograma limpo — padrão típico de variação laboratorial, não de doença. <b>Creatinina 0,81</b> abaixo do piso (0,84) é irrelevante com filtração &gt;90.</p>
+  <div class="t">ℹ️ Dois sinais para acompanhar, sem peso isolado</div>
+  <p><b>PCR ultrassensível 2,00 mg/L</b> cai na faixa de risco vascular moderado (1 a 3) — uma medida só, sensível a resfriado ou treino pesado na véspera. <b>HOMA-Beta 84</b> ficou abaixo da faixa do laudo (167–175), mas glicose, insulina, HOMA-IR, peptídeo C e HbA1c estão todos normais.</p>
 </div>
 <div class="alert o">
-  <div class="t">✅ Coração, rins e coagulação sem alteração</div>
-  <p>ECG dentro dos limites da normalidade, ritmo sinusal. Função renal preservada (TFG &gt;90, categoria G1). Coagulograma e plaquetas normais.</p>
+  <div class="t">✅ Glicose voltou para a faixa: 92,8 mg/dL</div>
+  <p>Os 102,2 de maio não se repetiram, e a <b>HbA1c de 5,60%</b> (normal abaixo de 5,7) confirma que não há pré-diabetes hoje — embora a um décimo da linha. Hemograma inteiro dentro da faixa, tireoide, rim, vitaminas e marcadores tumorais sem alteração.</p>
 </div>
 
 <h2>Evolução — glicose em jejum</h2>
 <div class="card">
   <svg id="chart" class="chart" aria-label="Evolução da glicose"></svg>
   <div class="hist" style="margin-top:10px">
-    <span><b>08/08/2023</b> 85,0</span><span><b>13/09/2023</b> 79,0</span><span><b>11/05/2026</b> 102,2</span>
-    <span style="color:var(--warn)"><b>Δ</b> +23,2 mg/dL vs. 2023</span>
+    <span><b>08/08/2023</b> 85,0</span><span><b>13/09/2023</b> 79,0</span><span><b>11/05/2026</b> 102,2</span><span><b>01/10/2026</b> 92,8</span>
+    <span style="color:var(--ok)"><b>Δ</b> −9,4 mg/dL vs. mai/2026</span>
   </div>
 </div>
 
 <div id="panels"></div>
 
-<h2>Cardiovascular · 11/05/2026</h2>
+<h2>Cardiovascular · 11/05/2026 (não repetido em outubro)</h2>
 <div class="card">
   <h3>Eletrocardiograma de repouso</h3>
   <div class="row">
@@ -192,24 +196,28 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
 <h2>O que os dados dizem</h2>
 <div class="card">
   <ol class="ins">
-    <li><b>A glicose é a única história real deste exame.</b> Em 2023 você tinha duas medidas confortavelmente normais (85 e 79). Em 2026 aparece 102,2 — não é diagnóstico de nada, mas é a primeira vez que um número seu cruza a linha, e a direção da trajetória importa mais que o valor absoluto.</li>
-    <li><b>Uma medida isolada de glicose não fecha caso.</b> Jejum irregular, noite mal dormida ou estresse agudo mexem nesse valor. O que resolve a dúvida é <b>hemoglobina glicada (HbA1c)</b>, que enxerga ~3 meses de média em vez de uma manhã — e não foi pedida nesta coleta.</li>
-    <li><b>Tudo que fala de inflamação ou infecção está silencioso.</b> Leucócitos 7.510 no meio da faixa, neutrófilos 47%, eosinófilos e basófilos normais, plaquetas 230 mil. Não há sinal de processo agudo.</li>
-    <li><b>Série vermelha excelente.</b> Hemoglobina 15,4 e hematócrito 44% — sem qualquer sombra de anemia. VCM 83,8 fica no piso da faixa, o que só valeria investigação (ferritina) se houvesse anemia junto; não é o caso.</li>
-    <li><b>Rim intacto.</b> Creatinina 0,81 praticamente idêntica a 2023 (0,79 e 0,81) e ureia 35,1 estável vs. 33,0 — três anos sem deriva nenhuma. TFG &gt;90 = categoria G1.</li>
-    <li><b>Faltam peças importantes no painel.</b> Não há <b>perfil lipídico</b> (colesterol, HDL, LDL, triglicerídeos), <b>HbA1c</b>, <b>TSH</b>, <b>vitamina D</b> nem <b>ácido úrico</b>. Com uma glicose limítrofe em cima da mesa, o lipídico é a lacuna que mais incomoda — glicose e triglicerídeos costumam se mexer juntos.</li>
-    <li><b>Fígado só tem dado de 2023</b> (TGO 15 / TGP 22, ambos normais). Não foi remedido agora.</li>
+    <li><b>O colesterol virou a história principal.</b> Em três anos o LDL subiu 37% (111 → 151,67) enquanto o HDL caiu 17% (67 → 55,39). Os triglicerídeos seguem baixos (79) e os índices de Castelli ainda estão em baixo risco (3,94 e 2,73), mas a direção é ruim nas duas pontas — e o histórico familiar de colesterol alto faz esse número pesar mais do que pesaria em outra pessoa de 29 anos.</li>
+    <li><b>A glicose de maio foi um ponto fora da curva, não uma tendência.</b> 92,8 em jejum, HbA1c 5,60%, insulina 7,0 e HOMA-IR 1,6 contam a mesma história: sem resistência à insulina mensurável. O único asterisco é a HbA1c a 0,1 ponto do limite de pré-diabetes — vale repetir uma vez por ano.</li>
+    <li><b>O fígado mudou desde 2023.</b> GGT acima da faixa, TGP dobrada e TGO quase dobrada — todas subindo juntas. Somado à ferritina no alto da faixa (281,8 de um teto de 336) e ao ácido úrico encostando no limite (5,4 → 6,9, teto 7,2), é o conjunto que costuma aparecer com gordura no fígado ou consumo de álcool. Conversa com o que a antropometria de julho mostrou: gordura concentrada no abdome. Quem fecha essa questão é o ultrassom e o médico, não o painel.</li>
+    <li><b>Creatinina subiu, mas o rim está intacto.</b> De 0,81 para 0,98 (+21%), agora dentro da faixa pela primeira vez, com filtração &gt;90 e ureia estável (32,92). Variação desse tamanho costuma vir de hidratação, treino ou creatina — não de perda de função.</li>
+    <li><b>Hemograma limpo, sem nenhum desvio.</b> Os dois valores que estavam na borda em maio voltaram: CHCM 35,0 → 33,7 e linfócitos 3.079 → 2.720. Confirma que era variação de laboratório.</li>
+    <li><b>Tireoide sem alteração.</b> TSH 0,991, T4 livre 0,90 e T3 livre 3,36, todos no meio da faixa. O T4 livre subiu de 0,68 (2023), ainda dentro do normal.</li>
+    <li><b>Hormônios dentro da faixa, do meio para baixo.</b> Testosterona total 343,9 (faixa 175–781) e livre 8,56 (3,40–24,60) ficam no terço inferior; LH e FSH normais, estradiol, DHT, DHEA-S e cortisol sem alteração. A coleta foi às 10h14 — testosterona cai ao longo da manhã, então o valor pode estar um pouco subestimado.</li>
+    <li><b>Vitamina D 24,5 é normal, mas no piso.</b> A faixa da população geral é 20 a 60; o alvo de 30 só se aplica a grupos de risco. B12, folato, ferro, cálcio, magnésio e PTH normais.</li>
+    <li><b>Marcadores tumorais todos baixos.</b> PSA 0,66, CEA 1,28 e CA 19-9 abaixo de 0,8 — nenhum perto do limite.</li>
+    <li><b>O que ainda falta.</b> O laudo traz <b>vitamina C</b> e <b>anti-GAD</b> como "não prontos". A <b>Lp(a)</b>, que era prioridade pelo histórico familiar, não aparece nesta emissão; e a página do SHBG (21,80) não veio com unidade nem faixa. O coagulograma é de maio.</li>
   </ol>
 </div>
 
 <h2>Sugestão de próximos passos</h2>
 <div class="card">
   <ul class="next">
-    <li><b>HbA1c</b> — confirma ou descarta o achado da glicose com uma medida estável.</li>
-    <li><b>Perfil lipídico completo</b> — a lacuna mais óbvia do painel atual.</li>
-    <li><b>Repetir glicose em jejum</b> com jejum bem controlado de 8–12h.</li>
-    <li><b>TSH, vitamina D, B12 e ácido úrico</b> — checkup padrão para a faixa dos 29.</li>
-    <li>Levar este painel ao <b>Dr. Marcio Schiavon</b> (solicitante) para decidir o que repetir e em quanto tempo.</li>
+    <li>Levar o <b>perfil lipídico + histórico familiar</b> ao médico para definir a categoria de risco e a meta de LDL.</li>
+    <li>Pedir <b>Lp(a)</b> e <b>ApoB</b> — a Lp(a) é genética e só precisa ser medida uma vez na vida.</li>
+    <li><b>Repetir GGT, TGO e TGP</b> em 2–3 meses e perguntar sobre <b>ultrassom de abdome</b>.</li>
+    <li>Buscar no laboratório os resultados pendentes (<b>vitamina C</b> e <b>anti-GAD</b>) e a página completa do <b>SHBG</b>.</li>
+    <li><b>Repetir o lipidograma</b> depois de ~3 meses de ajuste em dieta e exercício, para ver quanto do LDL responde a hábito.</li>
+    <li>Levar este painel ao <b>Dr. Leonardo Wanderloff Franco</b> (solicitante).</li>
   </ul>
 </div>
 
@@ -218,7 +226,8 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
 </div>
 
 <div class="foot">
-  Fontes: LANAC Laboratório de Análises Clínicas — protocolo 025-67701-2008, coleta 11/05/2026 10:13, emissão 18/05/2026 (7 páginas).<br>
+  Fontes: LANAC Laboratório de Análises Clínicas — protocolo 025-67844-2384, coleta 01/10/2026 10:14, emissão 03/10/2026 (25 páginas).<br>
+  LANAC — protocolo 025-67701-2008, coleta 11/05/2026 (hemograma anterior e coagulograma).<br>
   CendiCardio — ECG de repouso 28537, 11/05/2026.<br>
   Comparativos: O.S. 025-66730-2108 (13/09/2023) e 025-66694-2419 (08/08/2023).
 </div>
@@ -230,50 +239,159 @@ ul.next li{margin:0 0 8px;font-size:14px;line-height:1.5}
 /* status: calculado a partir de lo/hi quando existirem; senão usa 'force' */
 const PANELS = [
 {
-  titulo:"Hemograma · 11/05/2026", sub:"Sangue total com EDTA · método automatizado",
-  grupos:[
-   {nome:"Eritrograma", itens:[
-     {n:"Hematócrito",       v:44.00, u:"%",         lo:40,   hi:50},
-     {n:"Hemoglobina",       v:15.40, u:"g/dL",      lo:13,   hi:17},
-     {n:"Hemácias",          v:5.25,  u:"milhões/µL",lo:4.5,  hi:5.5},
-     {n:"V.C.M.",            v:83.80, u:"fL",        lo:83,   hi:101},
-     {n:"H.C.M.",            v:29.30, u:"pg",        lo:27,   hi:32},
-     {n:"C.H.C.M.",          v:35.00, u:"%",         lo:31.5, hi:34.5},
-     {n:"RDW",               v:11.90, u:"%",         lo:11.6, hi:14.0}
-   ]},
-   {nome:"Leucograma", itens:[
-     {n:"Leucócitos",        v:7510,  u:"/mm³",      lo:4000, hi:10000},
-     {n:"Neutrófilos",       v:3530,  u:"/mm³",      lo:2000, hi:7000, obs:"47%"},
-     {n:"Linfócitos típicos",v:3079,  u:"/mm³",      lo:1000, hi:3000, obs:"41%"},
-     {n:"Monócitos",         v:601,   u:"/mm³",      lo:200,  hi:1000, obs:"8%"},
-     {n:"Eosinófilos",       v:225,   u:"/mm³",      lo:20,   hi:500,  obs:"3%"},
-     {n:"Basófilos",         v:75,    u:"/mm³",      lo:20,   hi:100,  obs:"1%"}
-   ]},
-   {nome:"Plaquetas", itens:[
-     {n:"Plaquetas",         v:230000,u:"/mm³",      lo:150000,hi:400000},
-     {n:"V.P.M.",            v:9.9,   u:"fL",        lo:7.5,  hi:11.2}
-   ]}
-  ]
-},
-{
-  titulo:"Bioquímica e função renal · 11/05/2026", sub:"Soro",
+  titulo:"Colesterol e lipídios · 01/10/2026", sub:"Soro · colorimétrico/enzimático · LDL por dosagem direta",
   grupos:[
    {nome:null, itens:[
-     {n:"Glicose em jejum",  v:102.2, u:"mg/dL",     lo:60,   hi:99,
-      hist:[["08/08/2023",85.0],["13/09/2023",79.0]],
-      obs:"laudo sugere GTT para valores 100–125"},
-     {n:"Ureia",             v:35.10, u:"mg/dL",     lo:17,   hi:43,
-      hist:[["08/08/2023",33.0]]},
-     {n:"Creatinina",        v:0.81,  u:"mg/dL",     lo:0.84, hi:1.25,
-      hist:[["08/08/2023",0.81],["13/09/2023",0.79]],
-      force:"ok", tagtxt:"NORMAL", obs:"abaixo do piso, mas sem significado com TFG >90"},
-     {n:"Taxa de filtração glomerular (eGFR)", txt:"> 90,0", u:"mL/min/1,73m²",
-      force:"ok", tagtxt:"G1 NORMAL", obs:"CKD-EPI 2021 · categoria G1 (normal)"}
+     {n:"Colesterol total",  v:218.27,u:"mg/dL",     lo:0,    hi:190,
+      hist:[["08/08/2023",177.0]], obs:"desejável abaixo de 190"},
+     {n:"LDL colesterol",    v:151.67,u:"mg/dL",     lo:0,    hi:115, tagtxt:"ACIMA DA META",
+      hist:[["08/08/2023",111.0]], obs:"meta para baixo risco: abaixo de 115 (risco intermediário: abaixo de 100)"},
+     {n:"HDL colesterol",    v:55.39, u:"mg/dL",     force:"ok", tagtxt:"NORMAL",
+      hist:[["08/08/2023",67.0]], obs:"desejável acima de 40"},
+     {n:"Colesterol não-HDL",v:162.88,u:"mg/dL",     lo:0,    hi:160, tagtxt:"ACIMA DA META",
+      obs:"meta para baixo risco: abaixo de 160"},
+     {n:"Triglicerídeos",    v:79,    u:"mg/dL",     lo:0,    hi:150,
+      hist:[["08/08/2023",51]], obs:"desejável abaixo de 150 em jejum"},
+     {n:"VLDL",              v:15.80, u:"mg/dL",     force:"ok", tagtxt:"SEM REF.",
+      obs:"o laboratório não dá valor de referência"},
+     {n:"Lipídeos totais",   v:584,   u:"mg/dL",     lo:400,  hi:800},
+     {n:"Índice de Castelli I",  v:3.94, u:"",       lo:0,    hi:4.96, obs:"colesterol total ÷ HDL · baixo risco até 4,96"},
+     {n:"Índice de Castelli II", v:2.73, u:"",       lo:1.0,  hi:3.64, obs:"LDL ÷ HDL · baixo risco 1,0 a 3,64"}
    ]}
   ]
 },
 {
-  titulo:"Coagulograma · 11/05/2026", sub:"Sangue total com EDTA e plasma citratado · coagulométrico",
+  titulo:"Glicose e insulina · 01/10/2026", sub:"Soro e sangue total · HbA1c por eletroforese capilar",
+  grupos:[
+   {nome:null, itens:[
+     {n:"Glicose em jejum",  v:92.8,  u:"mg/dL",     lo:60,   hi:99,
+      hist:[["08/08/2023",85.0],["13/09/2023",79.0],["11/05/2026",102.2]]},
+     {n:"Hemoglobina glicada (HbA1c)", v:5.60, u:"%", force:"ok", tagtxt:"NORMAL",
+      obs:"normal abaixo de 5,7 · pré-diabetes 5,7 a 6,4 · glicemia média estimada 114 mg/dL"},
+     {n:"Insulina",          v:7.0,   u:"mUI/mL",    lo:1.9,  hi:23.0},
+     {n:"HOMA-IR",           v:1.6,   u:"",          lo:0.4,  hi:2.9, obs:"faixa para IMC até 25 kg/m²"},
+     {n:"HOMA-Beta",         v:84,    u:"",          lo:167,  hi:175,
+      obs:"faixa do laudo é estreita (167–175); índice calculado a partir da glicose e da insulina"},
+     {n:"Peptídeo C",        v:2.23,  u:"ng/mL",     lo:0.9,  hi:7.1}
+   ]}
+  ]
+},
+{
+  titulo:"Fígado · 01/10/2026", sub:"Soro",
+  grupos:[
+   {nome:null, itens:[
+     {n:"Gama GT (GGT)",     v:71.65, u:"U/L",       lo:0,    hi:55, obs:"referência: inferior a 55"},
+     {n:"TGP / ALT",         v:46,    u:"U/L",       lo:0,    hi:50,
+      hist:[["08/08/2023",22]], obs:"referência: inferior a 50"},
+     {n:"TGO / AST",         v:26,    u:"U/L",       lo:0,    hi:50,
+      hist:[["08/08/2023",15]], obs:"referência: inferior a 50"},
+     {n:"Fosfatase alcalina",v:68.20, u:"U/L",       lo:43,   hi:115}
+   ]}
+  ]
+},
+{
+  titulo:"Rim, ácido úrico e inflamação · 01/10/2026", sub:"Soro",
+  grupos:[
+   {nome:null, itens:[
+     {n:"Creatinina",        v:0.98,  u:"mg/dL",     lo:0.84, hi:1.25,
+      hist:[["08/08/2023",0.81],["13/09/2023",0.79],["11/05/2026",0.81]]},
+     {n:"Taxa de filtração glomerular (eGFR)", txt:"> 90,0", u:"mL/min/1,73m²",
+      force:"ok", tagtxt:"G1 NORMAL", obs:"CKD-EPI 2021 · categoria G1 (normal)"},
+     {n:"Ureia",             v:32.92, u:"mg/dL",     lo:17,   hi:43,
+      hist:[["08/08/2023",33.0],["11/05/2026",35.10]]},
+     {n:"Ácido úrico",       v:6.9,   u:"mg/dL",     lo:3.5,  hi:7.2,
+      hist:[["08/08/2023",5.4]]},
+     {n:"Proteína C reativa ultrassensível", v:2.00, u:"mg/L", force:"at", tagtxt:"RISCO MODERADO",
+      obs:"risco vascular: baixo abaixo de 1,00 · moderado 1,00 a 3,00 · alto acima de 3,00"}
+   ]}
+  ]
+},
+{
+  titulo:"Hemograma · 01/10/2026", sub:"Sangue total com EDTA · método automatizado",
+  grupos:[
+   {nome:"Eritrograma", itens:[
+     {n:"Hematócrito",       v:44.60, u:"%",         lo:40,   hi:50,   hist:[["11/05/2026",44.00]]},
+     {n:"Hemoglobina",       v:15.00, u:"g/dL",      lo:13,   hi:17,   hist:[["11/05/2026",15.40]]},
+     {n:"Hemácias",          v:5.11,  u:"milhões/µL",lo:4.5,  hi:5.5,  hist:[["11/05/2026",5.25]]},
+     {n:"V.C.M.",            v:87.30, u:"fL",        lo:83,   hi:101,  hist:[["11/05/2026",83.80]]},
+     {n:"H.C.M.",            v:29.40, u:"pg",        lo:27,   hi:32,   hist:[["11/05/2026",29.30]]},
+     {n:"C.H.C.M.",          v:33.70, u:"%",         lo:31.5, hi:34.5, hist:[["11/05/2026",35.00]]},
+     {n:"RDW",               v:12.50, u:"%",         lo:11.6, hi:14.0, hist:[["11/05/2026",11.90]]}
+   ]},
+   {nome:"Leucograma", itens:[
+     {n:"Leucócitos",        v:6800,  u:"/mm³",      lo:4000, hi:10000, hist:[["11/05/2026",7510]]},
+     {n:"Neutrófilos",       v:3400,  u:"/mm³",      lo:2000, hi:7000, obs:"50%", hist:[["11/05/2026",3530]]},
+     {n:"Linfócitos típicos",v:2720,  u:"/mm³",      lo:1000, hi:3000, obs:"40%", hist:[["11/05/2026",3079]]},
+     {n:"Monócitos",         v:408,   u:"/mm³",      lo:200,  hi:1000, obs:"6%",  hist:[["11/05/2026",601]]},
+     {n:"Eosinófilos",       v:204,   u:"/mm³",      lo:20,   hi:500,  obs:"3%",  hist:[["11/05/2026",225]]},
+     {n:"Basófilos",         v:68,    u:"/mm³",      lo:20,   hi:100,  obs:"1%",  hist:[["11/05/2026",75]]}
+   ]},
+   {nome:"Plaquetas", itens:[
+     {n:"Plaquetas",         v:270000,u:"/mm³",      lo:150000,hi:400000, hist:[["11/05/2026",230000]]},
+     {n:"V.P.M.",            v:8.8,   u:"fL",        lo:7.5,  hi:11.2,    hist:[["11/05/2026",9.9]]}
+   ]}
+  ]
+},
+{
+  titulo:"Tireoide e paratireoide · 01/10/2026", sub:"Soro · quimioluminescência",
+  grupos:[
+   {nome:null, itens:[
+     {n:"TSH ultrassensível",v:0.991, u:"uUI/mL",    lo:0.34, hi:5.6,
+      hist:[["08/08/2023",0.87]]},
+     {n:"T4 livre",          v:0.90,  u:"ng/dL",     lo:0.54, hi:1.24,
+      hist:[["08/08/2023",0.68]]},
+     {n:"T3 livre",          v:3.36,  u:"pg/mL",     lo:2.5,  hi:3.9},
+     {n:"Paratormônio (PTH intacto)", v:35.5, u:"pg/mL", lo:12, hi:88}
+   ]}
+  ]
+},
+{
+  titulo:"Hormônios · 01/10/2026", sub:"Soro · coleta às 10h14",
+  grupos:[
+   {nome:null, itens:[
+     {n:"Testosterona total",       v:343.90, u:"ng/dL", lo:175,  hi:781},
+     {n:"Testosterona livre",       v:8.56,   u:"ng/dL", lo:3.40, hi:24.60, obs:"calculada · faixa para homens de 17 a 40 anos"},
+     {n:"Testosterona biodisponível",v:200.88,u:"ng/dL", lo:82,   hi:626,   obs:"calculada · faixa para homens de 17 a 40 anos"},
+     {n:"SHBG",                     v:21.80,  u:"",      force:"ok", tagtxt:"SEM REF.",
+      obs:"valor do laudo comparativo — a página do exame, com unidade e faixa, não veio no PDF"},
+     {n:"DHT (di-hidrotestosterona)",v:324.70,u:"pg/mL", lo:143,  hi:842},
+     {n:"DHEA-S",                   v:373,    u:"µg/dL", lo:85,   hi:690,   obs:"faixa para homens de 22 a 30 anos"},
+     {n:"Estradiol",                v:12.7,   u:"pg/mL", lo:0,    hi:47,    obs:"referência: inferior a 47"},
+     {n:"LH",                       v:2.08,   u:"mUI/mL",lo:1.24, hi:8.62},
+     {n:"FSH",                      v:3.05,   u:"mUI/mL",lo:1.70, hi:19.26},
+     {n:"Cortisol",                 v:8.9,    u:"mcg/dL",lo:6.02, hi:18.40, obs:"faixa para coleta entre 6h e 10h"}
+   ]}
+  ]
+},
+{
+  titulo:"Vitaminas, ferro e minerais · 01/10/2026", sub:"Soro",
+  grupos:[
+   {nome:null, itens:[
+     {n:"Vitamina D (25-hidroxi)", v:24.5, u:"ng/mL", lo:20,   hi:60,
+      obs:"faixa da população geral · o ideal de 30 a 60 vale só para grupos de risco"},
+     {n:"Vitamina B12",      v:515,   u:"pg/mL",     lo:180,  hi:914},
+     {n:"Ácido fólico",      v:8.7,   u:"ng/mL",     force:"ok", tagtxt:"NORMAL", obs:"referência: superior a 3,1"},
+     {n:"Ferritina",         v:281.8, u:"ng/mL",     lo:23.9, hi:336.2},
+     {n:"Ferro",             v:88.70, u:"µg/dL",     lo:70,   hi:180},
+     {n:"Cálcio",            v:9.54,  u:"mg/dL",     lo:8.6,  hi:10.3},
+     {n:"Magnésio",          v:2.0,   u:"mg/dL",     lo:1.8,  hi:2.6}
+   ]}
+  ]
+},
+{
+  titulo:"Marcadores tumorais · 01/10/2026", sub:"Soro · quimioluminescência",
+  grupos:[
+   {nome:null, itens:[
+     {n:"PSA total",         v:0.66,  u:"ng/mL",     lo:0.10, hi:4.00},
+     {n:"PSA livre",         v:0.25,  u:"ng/mL",     force:"ok", tagtxt:"SEM REF.",
+      obs:"sem valor de referência · a relação livre/total só é calculada com PSA total entre 4 e 10"},
+     {n:"CEA",               v:1.28,  u:"ng/mL",     lo:0,    hi:3, obs:"não fumantes: até 3"},
+     {n:"CA 19-9",           txt:"< 0,8", u:"U/mL",  force:"ok", tagtxt:"NORMAL", obs:"referência: inferior a 35"}
+   ]}
+  ]
+},
+{
+  titulo:"Coagulograma · 11/05/2026 (não repetido em outubro)", sub:"Sangue total com EDTA e plasma citratado · coagulométrico",
   grupos:[
    {nome:null, itens:[
      {n:"TAP — tempo de protrombina", v:11.70, u:"segundos", force:"ok", tagtxt:"NORMAL",
@@ -282,15 +400,6 @@ const PANELS = [
       hist:[["08/08/2023",0.97],["13/09/2023",0.98]]},
      {n:"Tempo parcial de tromboplastina", v:33.10, u:"segundos", lo:24.9, hi:37.0,
       hist:[["08/08/2023",27.70],["13/09/2023",32.10]]}
-   ]}
-  ]
-},
-{
-  titulo:"Histórico — exames de 2023 não repetidos agora", sub:"O.S. 025-66694-2419 · 08/08/2023",
-  grupos:[
-   {nome:null, itens:[
-     {n:"TGO / AST",         v:15, u:"U/L", force:"ok", tagtxt:"NORMAL 2023"},
-     {n:"TGP / ALT",         v:22, u:"U/L", force:"ok", tagtxt:"NORMAL 2023"}
    ]}
   ]
 }
@@ -358,7 +467,7 @@ document.getElementById("kpis").innerHTML =
 /* gráfico da glicose — redesenhado na largura real do container */
 function drawChart(){
   const el = document.getElementById("chart");
-  const pts = [["ago/23",85.0],["set/23",79.0],["mai/26",102.2]];
+  const pts = [["ago/23",85.0],["set/23",79.0],["mai/26",102.2],["out/26",92.8]];
   const H=190,L=44,R=16,T=18,B=32;
   const W = Math.max(280, Math.round(el.clientWidth || 600));
   el.setAttribute("viewBox","0 0 "+W+" "+H);
